@@ -30,6 +30,7 @@ if response.status_code == 200:
         lesson_time_start = (lesson_time_block.text).split('\n')[2]
         lesson_time_finish = (lesson_time_block.text).split('\n')[3]
 
+
         lesson_data = lesson.find('div', class_='discBlock')
         lesson_name = (lesson_data.text).split('\n')[2]
         lesson_teachers = (lesson_data.text).replace((lesson_name), '')
