@@ -61,21 +61,23 @@ def start(message):
     connect = sqlite3.connect(DB_PATH)
     cursor = connect.cursor()
     
-    # Проверяем, существует ли уже запись с таким id
+    connect = sqlite3.connect(DB_PATH)
+    cursor = connect.cursor()
+    
     cursor.execute("SELECT 1 FROM users WHERE id = ?", (user_id,))
     if cursor.fetchone() is None:
-        # Если записи с таким id нет, вставляем новую запись
         cursor.execute("""INSERT INTO users (id, message, time_registration)
-                          VALUES(?,?,?)""", (user_id, message_id, time))
+                          VALUES (?, ?, ?)""", (user_id, message_id, time))
         connect.commit()
-        print("Новая запись добавлена.")
+        print("зарегистрирован новый пользователь")
     else:
-        print("Запись с таким id уже существует.")
-    
-    # Закрываем соединение с базой данных
+        cursor.execute("""UPDATE users
+                          SET message = ?
+                          WHERE id = ?""", (message_id, user_id))
+        connect.commit()
+        print("Запись обновлена.")
     connect.close()
     
-    print("зарегистрирован новый пользователь")
     bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=keyboard_courses)
 
 
