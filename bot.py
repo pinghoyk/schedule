@@ -7,6 +7,9 @@ from datetime import datetime
 import pytz
 
 bot = telebot.TeleBot(config.API)
+# переменные
+DB_NAME = 'database.db'
+DB_PATH = DB_NAME
 
 btn_1course = InlineKeyboardButton(text='1 курс', callback_data="select_course_1")
 btn_2course = InlineKeyboardButton(text='2 курс', callback_data="select_course_2")
