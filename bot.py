@@ -19,6 +19,26 @@ btn_5course = InlineKeyboardButton(text='5 курс', callback_data="select_cour
 
 keyboard_courses = InlineKeyboardMarkup(row_width=2)
 keyboard_courses.add(btn_1course, btn_2course, btn_3course, btn_4course, btn_5course)
+
+# проверки
+if os.path.exists(DB_PATH):
+	print('бд есть!')
+else: 
+	connect = sqlite3.connect(DB_PATH)
+	cursor = connect.cursor()
+	cursor.execute("""
+		CREATE TABLE users (
+			id INTEGER,
+			message INTEGER, 
+			groups INTEGER,
+			time_registration TIME
+
+		)
+		""")
+
+	connect.commit()
+	connect.close()
+	print("бд создана")
 @bot.message_handler(commands=['start'])
 def start(message):
 	bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=keyboard_courses)
