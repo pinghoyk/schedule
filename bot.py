@@ -51,7 +51,28 @@ def now_time():
     return date
 @bot.message_handler(commands=['start'])
 def start(message):
-	bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=keyboard_courses)
+    user_id = message.chat.id
+    message_id = message.id
+    time = now_time()
+    connect = sqlite3.connect(DB_PATH)
+    cursor = connect.cursor()
+    
+    # Проверяем, существует ли уже запись с таким id
+    cursor.execute("SELECT 1 FROM users WHERE id = ?", (user_id,))
+    if cursor.fetchone() is None:
+        # Если записи с таким id нет, вставляем новую запись
+        cursor.execute("""INSERT INTO users (id, message, time_registration)
+                          VALUES(?,?,?)""", (user_id, message_id, time))
+        connect.commit()
+        print("Новая запись добавлена.")
+    else:
+        print("Запись с таким id уже существует.")
+    
+    # Закрываем соединение с базой данных
+    connect.close()
+    
+    print("зарегистрирован новый пользователь")
+    bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=keyboard_courses)
 
 
 
