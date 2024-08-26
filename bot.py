@@ -39,6 +39,16 @@ else:
 	connect.commit()
 	connect.close()
 	print("бд создана")
+
+# функции
+def now_time():
+    now = datetime.now()
+    tz = pytz.timezone('Europe/Moscow')
+    now_moscow = now.astimezone(tz)
+    current_time = now_moscow.strftime("%H:%M")
+    current_date = now_moscow.strftime("%m.%d.%Y")
+    date = f"{current_date} {current_time}"
+    return date
 @bot.message_handler(commands=['start'])
 def start(message):
 	bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=keyboard_courses)
