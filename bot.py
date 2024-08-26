@@ -75,6 +75,10 @@ def start(message):
     bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=keyboard_courses)
 
 
+@bot.callback_query_handler(func=lambda call:True)
+def callback_query(call):
+	if call.data == "select_course_1":
+		pass
 
 
 
