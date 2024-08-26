@@ -11,12 +11,14 @@ bot = telebot.TeleBot(config.API)
 DB_NAME = 'database.db'
 DB_PATH = DB_NAME
 
+# кнопки
 btn_1course = InlineKeyboardButton(text='1 курс', callback_data="select_course_1")
 btn_2course = InlineKeyboardButton(text='2 курс', callback_data="select_course_2")
 btn_3course = InlineKeyboardButton(text='3 курс', callback_data="select_course_3")
 btn_4course = InlineKeyboardButton(text='4 курс', callback_data="select_course_4")
 btn_5course = InlineKeyboardButton(text='5 курс', callback_data="select_course_5")
 
+# клавиатуры
 keyboard_courses = InlineKeyboardMarkup(row_width=2)
 keyboard_courses.add(btn_1course, btn_2course, btn_3course, btn_4course, btn_5course)
 
@@ -49,6 +51,8 @@ def now_time():
     current_date = now_moscow.strftime("%m.%d.%Y")
     date = f"{current_date} {current_time}"
     return date
+
+# команды
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.chat.id
