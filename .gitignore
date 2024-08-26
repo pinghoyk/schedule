@@ -1,3 +1,4 @@
 # Specify filepatterns you want git to ignore.
 config.py
 __pycache__/
+database.db
