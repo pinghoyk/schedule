@@ -5,6 +5,7 @@ import sqlite3
 import os
 from datetime import datetime
 import pytz
+import parser
 
 bot = telebot.TeleBot(config.API)
 # переменные
