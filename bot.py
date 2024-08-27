@@ -4,7 +4,7 @@ import config
 import sqlite3
 import os
 from datetime import datetime
-import pytz
+import pytz 
 import parser
 
 bot = telebot.TeleBot(config.API)
@@ -85,13 +85,11 @@ def user_group(user_id):
 
 
 # команды
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['start']) # отслеживание команды старт
 def start(message):
     user_id = message.chat.id
     message_id = message.id
     time = now_time()
-    connect = sqlite3.connect(DB_PATH)
-    cursor = connect.cursor()
     
     connect = sqlite3.connect(DB_PATH)
     cursor = connect.cursor()
@@ -115,7 +113,8 @@ def start(message):
 
 @bot.callback_query_handler(func=lambda call:True) # цикл чтобы функция ниже всегда работала
 def callback_query(call): #обработчик вызовов
-    print(call.data)
+    print(f"Вызов: {call.data}")
+
     if (call.data).split("_")[0] == "select" and (call.data).split("_")[1] == "course":
         x = parser.table_courses()
         groups = (x[f'{(call.data).split("_")[2]} курс'])
@@ -124,9 +123,9 @@ def callback_query(call): #обработчик вызовов
 
         for group in keys:
             button = InlineKeyboardButton(text=f"{group}", callback_data=f"select_group_{group}")
-            buttons.append(button)
+            buttons.append(button) # добавление в массив
 
-        back = InlineKeyboardButton(text="Назад", callback_data=f"back_courses")
+        back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
 
 
         keyboard_groups = InlineKeyboardMarkup(row_width=3)
