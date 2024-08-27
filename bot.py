@@ -83,6 +83,24 @@ def user_group(user_id):
     connect.close()
     return group[0]
 
+def transform_week(text):
+    result = ""
+    for day in text:
+        result += f"{day}\n"
+        lessons = text[day]
+        for lesson in lessons:
+            result += f"\n"
+            result += f"Пара: {lesson['number']}\n"
+            result += f"Время: {lesson['time_start']} - {lesson['time_finish']}\n"
+            result += f"Предмет: {lesson['name']}\n"
+            for data in lesson["data"]:
+                result += f"Преподаватель: {data['teacher']}\n"
+                result += f"Кабинет: {data['classroom']}\n"
+        result += "\n\n"
+    return result
+
+
+
 
 
 
