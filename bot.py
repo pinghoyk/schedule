@@ -28,6 +28,8 @@ btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
 btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
 btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
 
+btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
+
 # клавиатуры
 keyboard_courses = InlineKeyboardMarkup(row_width=2)
 keyboard_courses.add(*buttons)
@@ -35,6 +37,8 @@ keyboard_courses.add(*buttons)
 keyboard_main = InlineKeyboardMarkup(row_width=2)
 keyboard_main.add(btn_day, btn_week, btn_change_group)
 
+keyboard_week = InlineKeyboardMarkup(row_width=2)
+keyboard_week.add(btn_return_main)
 
 
 # проверки
