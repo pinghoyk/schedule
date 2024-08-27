@@ -152,7 +152,23 @@ def callback_query(call): #обработчик вызовов
         connect.close()
 
         print(f"{LOG}записана группа пользователя")
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Выберите расписание:", reply_markup=keyboard_main)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
+
+    if call.data == "select_week":
+        y = parser.table_courses()
+        group = user_group(call.message.chat.id)
+
+        year_start = int(group.split('-')[2])
+        course = YEAR - year_start
+        groups = (y[f'{course} курс'])
+        url = (groups[group])
+        schedule_week = parser.schedule(f'https://pronew.chenk.ru/blocks/manage_groups/website/{url}')
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"{schedule_week}", reply_markup=keyboard_week)
+
+
+    if call.data == "back_main":
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
+
 
 
 
