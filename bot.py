@@ -23,10 +23,16 @@ for i in range(len(x)):
     buttons.append(button)
 
 
+btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
+btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
+btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
+
 # клавиатуры
 keyboard_courses = InlineKeyboardMarkup(row_width=2)
 keyboard_courses.add(*buttons)
 
+keyboard_main = InlineKeyboardMarkup(row_width=2)
+keyboard_main.add(btn_day, btn_week, btn_change_group)
 
 
 # проверки
