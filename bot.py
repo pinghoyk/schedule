@@ -94,8 +94,8 @@ def start(message):
     bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=keyboard_courses)
 
 
-@bot.callback_query_handler(func=lambda call:True)
-def callback_query(call):
+@bot.callback_query_handler(func=lambda call:True) # цикл чтобы функция ниже всегда работала
+def callback_query(call): #обработчик вызовов
     print(call.data)
     if (call.data).split("_")[0] == "select" and (call.data).split("_")[1] == "course":
         x = parser.table_courses()
