@@ -35,6 +35,7 @@ keyboard_main = InlineKeyboardMarkup(row_width=2)
 keyboard_main.add(btn_day, btn_week, btn_change_group)
 
 
+
 # проверки
 if os.path.exists(DB_PATH):
 	print(f'{LOG}бд есть!')
@@ -131,9 +132,12 @@ def callback_query(call): #обработчик вызовов
                           WHERE id = ?""", (groups, user_id))
         connect.commit()
         connect.close()
-        
+
         print(f"{LOG}записана группа пользователя")
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Выбран курс {groups}", reply_markup=keyboard_courses)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Выберите расписание:", reply_markup=keyboard_main)
+
+
+
 
 
 
