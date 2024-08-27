@@ -40,6 +40,9 @@ keyboard_main.add(btn_day, btn_week, btn_change_group)
 keyboard_week = InlineKeyboardMarkup(row_width=2)
 keyboard_week.add(btn_return_main)
 
+keyboard_error = InlineKeyboardMarkup()
+keyboard_error.add(btn_change_group)
+
 
 # проверки
 if os.path.exists(DB_PATH):
@@ -117,21 +120,24 @@ def callback_query(call): #обработчик вызовов
 
     if (call.data).split("_")[0] == "select" and (call.data).split("_")[1] == "course":
         x = parser.table_courses()
-        groups = (x[f'{(call.data).split("_")[2]} курс'])
-        keys = (list(groups.keys()))
-        buttons = []
-
-        for group in keys:
-            button = InlineKeyboardButton(text=f"{group}", callback_data=f"select_group_{group}")
-            buttons.append(button) # добавление в массив
-
-        back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
-
-
-        keyboard_groups = InlineKeyboardMarkup(row_width=3)
-        keyboard_groups.add(*buttons)
-        keyboard_groups.add(back)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите группу:", reply_markup=keyboard_groups)
+        try:
+            groups = (x[f'{(call.data).split("_")[2]} курс'])
+            keys = (list(groups.keys()))
+            buttons = []
+    
+            for group in keys:
+                button = InlineKeyboardButton(text=f"{group}", callback_data=f"select_group_{group}")
+                buttons.append(button) # добавление в массив
+    
+            back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
+    
+    
+            keyboard_groups = InlineKeyboardMarkup(row_width=3)
+            keyboard_groups.add(*buttons)
+            keyboard_groups.add(back)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите группу:", reply_markup=keyboard_groups)
+        except:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выбранный курс не найден :(", reply_markup= keyboard_error)
 
     if call.data == "back_courses":
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
