@@ -90,11 +90,24 @@ def start(message):
 
 @bot.callback_query_handler(func=lambda call:True)
 def callback_query(call):
+    print(call.data)
     if (call.data).split("_")[0] == "select" and (call.data).split("_")[1] == "course":
         x = parser.table_courses()
         groups = (x[f'{(call.data).split("_")[2]} курс'])
         keys = (list(groups.keys()))
-        print(keys)
+        buttons = []
+
+        for group in keys:
+            button = InlineKeyboardButton(text=f"{group}", callback_data=f"select_group_{group}")
+            buttons.append(button)
+
+        back = InlineKeyboardButton(text="Назад", callback_data=f"back_courses")
+
+
+        keyboard_groups = InlineKeyboardMarkup(row_width=3)
+        keyboard_groups.add(*buttons)
+        keyboard_groups.add(back)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите группу:", reply_markup=keyboard_groups)
 
 
 
