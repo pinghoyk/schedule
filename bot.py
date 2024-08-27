@@ -109,6 +109,8 @@ def callback_query(call):
         keyboard_groups.add(back)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите группу:", reply_markup=keyboard_groups)
 
+    if call.data == "back_courses":
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
 
 
 
