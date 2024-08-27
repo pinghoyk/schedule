@@ -96,8 +96,4 @@ def table_courses(): # получение всех групп и курсов
                 course_dict[year_name][group_name] = group_link
     return course_dict
 
-def check_shedule(COURSE, GROUPE):
-    x = table_courses()
-    print(list(x.keys())[COURSE])
-    print(list(x[list(x.keys())[COURSE]].keys())[GROUPE])
-    return schedule(f"https://pronew.chenk.ru/blocks/manage_groups/website/{x[list(x.keys())[COURSE]][list(x[list(x.keys())[COURSE]].keys())[GROUPE]]}")
+
