@@ -13,6 +13,7 @@ DB_NAME = 'database.db'
 DB_PATH = DB_NAME
 
 LOG = "Логи: "
+YEAR = 25
 
 
 # кнопки
