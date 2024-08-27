@@ -14,18 +14,20 @@ DB_PATH = DB_NAME
 
 LOG = "Логи: "
 
-# кнопки
-btn_1course = InlineKeyboardButton(text='1 курс', callback_data="select_course_1")
-btn_2course = InlineKeyboardButton(text='2 курс', callback_data="select_course_2")
-btn_3course = InlineKeyboardButton(text='3 курс', callback_data="select_course_3")
-btn_4course = InlineKeyboardButton(text='4 курс', callback_data="select_course_4")
-btn_5course = InlineKeyboardButton(text='5 курс', callback_data="select_course_5")
 
+# кнопки
+x = parser.table_courses()
+buttons = []
+for i in range(len(x)):
+    button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
+    buttons.append(button)
 
 
 # клавиатуры
 keyboard_courses = InlineKeyboardMarkup(row_width=2)
-keyboard_courses.add(btn_1course, btn_2course, btn_3course, btn_4course, btn_5course)
+keyboard_courses.add(*buttons)
+
+
 
 # проверки
 if os.path.exists(DB_PATH):
