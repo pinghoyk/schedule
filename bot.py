@@ -62,7 +62,7 @@ else:
 	print(f"{LOG}бд создана")
 
 # функции
-def now_time():
+def now_time(): # функция получения текущего времени по мск
     now = datetime.now()
     tz = pytz.timezone('Europe/Moscow')
     now_moscow = now.astimezone(tz)
@@ -70,6 +70,19 @@ def now_time():
     current_date = now_moscow.strftime("%m.%d.%Y")
     date = f"{current_date} {current_time}"
     return date
+
+
+def user_group(user_id):
+    connect = sqlite3.connect(DB_PATH)
+    cursor = connect.cursor()
+    cursor.execute("SELECT groups FROM users WHERE id = ?", (int(user_id),))
+    group =list(cursor.fetchone()) # отправляем запрос в бд и ничего не меняя полоуучаем данные понятные пользователю
+    connect.close()
+    return group[0]
+
+
+
+
 
 # команды
 @bot.message_handler(commands=['start'])
