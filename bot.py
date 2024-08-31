@@ -158,9 +158,13 @@ def start(message):
 @bot.callback_query_handler(func=lambda call:True) # цикл чтобы функция ниже всегда работала
 def callback_query(call): #обработчик вызовов
     print(f"Вызов: {call.data}")
+    
+    if call.data == "ros23":
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id = call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
 
     if (call.data).split("_")[0] == "select" and (call.data).split("_")[1] == "course":
-        x = parser.table_courses()
+        if complex == "rus21": 
+        x = parser.table_courses("https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3")
         try:
             groups = (x[f'{(call.data).split("_")[2]} курс'])
             keys = (list(groups.keys()))
