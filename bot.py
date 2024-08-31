@@ -150,8 +150,9 @@ def start(message):
         connect.commit()
         print(f"{LOG}пользователь уже существует")
     connect.close()
-    
-    bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=keyboard_courses)
+
+
+    bot.send_message(message.chat.id, text="Выберите корпус:", reply_markup=keyboard_complex)
 
 
 @bot.callback_query_handler(func=lambda call:True) # цикл чтобы функция ниже всегда работала
