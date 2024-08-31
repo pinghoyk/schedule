@@ -86,17 +86,19 @@ def user_group(user_id):
 def transform_week(text):
     result = ""
     for day in text:
-        result += f"{day}\n"
+        result += f"*{day}*\n————————————————" 
         lessons = text[day]
         for lesson in lessons:
             result += f"\n"
-            result += f"Пара: {lesson['number']}\n"
-            result += f"Время: {lesson['time_start']} - {lesson['time_finish']}\n"
-            result += f"Предмет: {lesson['name']}\n"
+            result += f"{lesson['number']}.  "
+            result += f"_{lesson['time_start']} - {lesson['time_finish']}_\n"
+            result += f"*Предмет:* __{lesson['name']}__\n"
             for data in lesson["data"]:
-                result += f"Преподаватель: {data['teacher']}\n"
-                result += f"Кабинет: {data['classroom']}\n"
+                result += f"_{data['teacher']}_  " 
+                result += f"*{data['classroom']}*\n"
         result += "\n\n"
+    result = tg_markdown(result)
+    result = result.replace("*???*", "~???~")
     return result
 
 
