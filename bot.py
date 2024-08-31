@@ -17,7 +17,8 @@ YEAR = 25
 
 
 # кнопки
-x = parser.table_courses()
+btn_ros23 = InlineKeyboardButton(text="ул. Российская 23", callback_data="ros23") # выбор комплексов колледжа
+btn_blux91 = InlineKeyboardButton(text="ул. Блюхера 91", callback_data="blux91")
 buttons = []
 for i in range(len(x)):
     button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
