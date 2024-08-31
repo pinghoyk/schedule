@@ -100,6 +100,17 @@ def transform_week(text):
     return result
 
 
+def tg_markdown(text): # экранирование только для телеграма
+    special_characters = r'[]()>#+-=|{}.!'
+    escaped_text = ''
+    for char in text:
+        if char in special_characters:
+            escaped_text += f'\{char}'
+        else:
+            escaped_text += char
+    return escaped_text
+
+
 
 
 
