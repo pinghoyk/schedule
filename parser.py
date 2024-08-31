@@ -64,8 +64,7 @@ def schedule(URL): # расписание
     
     return schedule_dict
 
-def table_courses(): # получение всех групп и курсов
-    url = 'https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3'
+def table_courses(url): # получение всех групп и курсов
     response = requests.get(url)
     
     # Парсим содержимое страницы
