@@ -28,12 +28,13 @@ for i in range(len(x)):
 btn_back_complex = InlineKeyboardButton(text="Вернуться назад", callback_data="back_complex")
 
 
+btn_day = InlineKeyboardButton(text="День", callback_data="select_day") # выбрать расписание на день
+btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week") # выбрать расписание на неделю
+btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses") # изменить группу
 
-btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
-btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
-btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
+btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main") # вернуться назад
 
-btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
+
 
 # клавиатуры
 keyboard_courses = InlineKeyboardMarkup(row_width=2)
