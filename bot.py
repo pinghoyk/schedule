@@ -200,7 +200,8 @@ def callback_query(call): #обработчик вызовов
         url = (groups[group])
         schedule_week = parser.schedule(f'https://pronew.chenk.ru/blocks/manage_groups/website/{url}')
         text = transform_week(schedule_week)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
+
 
 
     if call.data == "back_main":
