@@ -20,7 +20,7 @@ YEAR = 25
 btn_ros23 = InlineKeyboardButton(text="ул. Российская 23", callback_data="ros23") # выбор комплексов колледжа
 btn_blux91 = InlineKeyboardButton(text="ул. Блюхера 91", callback_data="blux91")
 
-# x = parser.table_courses() # создание курсов для российской
+x = parser.table_courses("https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3") # создание курсов для российской
 buttons = []
 for i in range(len(x)):
     button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
