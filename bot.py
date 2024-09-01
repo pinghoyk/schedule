@@ -164,7 +164,7 @@ def callback_query(call): #обработчик вызовов
 
     if (call.data).split("_")[0] == "select" and (call.data).split("_")[1] == "course":
         if complex == "rus21": 
-        x = parser.table_courses("https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3")
+            x = parser.table_courses("https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3")
         try:
             groups = (x[f'{(call.data).split("_")[2]} курс'])
             keys = (list(groups.keys()))
