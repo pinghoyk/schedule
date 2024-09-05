@@ -86,7 +86,7 @@ def now_time(): # функция получения текущего време�
 def user_group(user_id):
     connect = sqlite3.connect(DB_PATH)
     cursor = connect.cursor()
-    cursor.execute("SELECT groups FROM users WHERE id = ?", (int(user_id)))
+    cursor.execute("SELECT groups FROM users WHERE id = ?", (int(user_id),))
     group =list(cursor.fetchone()) # отправляем запрос в бд и ничего не меняя полоуучаем данные понятные пользователю
     connect.close()
     return group[0]
