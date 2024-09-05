@@ -11,40 +11,39 @@ bot = telebot.TeleBot(config.API)
 # переменные
 DB_NAME = 'database.db'
 DB_PATH = DB_NAME
-
 LOG = "Логи: "
 YEAR = 25
 
 
 # кнопки
-btn_ros23 = InlineKeyboardButton(text="ул. Российская 23", callback_data="ros23") # выбор комплексов колледжа
-btn_blux91 = InlineKeyboardButton(text="ул. Блюхера 91", callback_data="blux91")
-
-x = parser.table_courses() # создание курсов для российской
+x = parser.table_courses()
 buttons = []
 for i in range(len(x)):
     button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
     buttons.append(button)
-btn_back_complex = InlineKeyboardButton(text="Вернуться назад", callback_data="back_complex")
 
 
-btn_day = InlineKeyboardButton(text="День", callback_data="select_day") # выбрать расписание на день
-btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week") # выбрать расписание на неделю
-btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses") # изменить группу
-
-btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main") # вернуться назад
+btn_ros_23 = InlineKeyboardButton(text="Российская 23", callback_data="ros_23")
+btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="btn_blux91")
 
 
+btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
+btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
+btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
+
+btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
 
 # клавиатуры
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
-keyboard_complex.add(btn_ros23, btn_blux91)
+keyboard_complex.add(btn_ros_23, btn_blux91)
+
+
 
 keyboard_courses = InlineKeyboardMarkup(row_width=2)
-keyboard_courses.add(*buttons) 
+keyboard_courses.add(*buttons)
 
 keyboard_main = InlineKeyboardMarkup(row_width=1)
-keyboard_main.add(btn_week, btn_change_group)
+keyboard_main.add( btn_week, btn_change_group)
 
 keyboard_week = InlineKeyboardMarkup(row_width=2)
 keyboard_week.add(btn_return_main)
@@ -64,7 +63,8 @@ else:
 			id INTEGER,
 			message INTEGER, 
 			groups INTEGER,
-			time_registration TIME
+			time_registration TIME,
+            role TEXT
 
 		)
 		""")
@@ -83,11 +83,10 @@ def now_time(): # функция получения текущего време�
     date = f"{current_date} {current_time}"
     return date
 
-
 def user_group(user_id):
     connect = sqlite3.connect(DB_PATH)
     cursor = connect.cursor()
-    cursor.execute("SELECT groups FROM users WHERE id = ?", (int(user_id),))
+    cursor.execute("SELECT groups FROM users WHERE id = ?", (int(user_id)))
     group =list(cursor.fetchone()) # отправляем запрос в бд и ничего не меняя полоуучаем данные понятные пользователю
     connect.close()
     return group[0]
@@ -107,9 +106,8 @@ def transform_week(text):
                 result += f"*{data['classroom']}*\n"
         result += "\n\n"
     result = tg_markdown(result)
-    result = result.replace("*???*", "~???~")
+    result = result.replace("???", "**???**")
     return result
-
 
 def tg_markdown(text): # экранирование только для телеграма
     special_characters = r'[]()>#+-=|{}.!'
@@ -150,21 +148,22 @@ def start(message):
         connect.commit()
         print(f"{LOG}пользователь уже существует")
     connect.close()
+    
+    bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex)
 
 
-    bot.send_message(message.chat.id, text="Выберите корпус:", reply_markup=keyboard_complex)
 
 
 @bot.callback_query_handler(func=lambda call:True) # цикл чтобы функция ниже всегда работала
 def callback_query(call): #обработчик вызовов
     print(f"Вызов: {call.data}")
-    
-    if call.data == "ros23":
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id = call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
+
+    if call.data == btn_ros_23:
+        x = "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3"
+        
 
     if (call.data).split("_")[0] == "select" and (call.data).split("_")[1] == "course":
-        if complex == "rus21": 
-        x = parser.table_courses("https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3")
+        x = parser.table_courses()
         try:
             groups = (x[f'{(call.data).split("_")[2]} курс'])
             keys = (list(groups.keys()))
