@@ -149,7 +149,8 @@ def start(message):
         print(f"{LOG}пользователь уже существует")
     connect.close()
     
-    bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex)
+    # bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex)
+    bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=keyboard_courses)
 
 
 
