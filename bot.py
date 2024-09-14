@@ -124,3 +124,30 @@ def tg_markdown(text): # экранирование только для теле
         else:
             escaped_text += char
     return escaped_text
+
+
+# команды
+@bot.message_handler(commands=['start'])
+def start(message):
+    user_id = message.chat.id
+    message_id = message.id
+    time = now_time()
+
+    connect = sqlite3.connect(DB_PATH)
+    cursor = connect.cursor()
+
+    cursor.execute("SELECT 1 FROM users WHERE id = ?", (user_id,))
+    if cursor.fetchone() is None:
+        cursor.execute("""INSERT INTO users (id, message, time_registration)
+                          VALUES (?, ?, ?)""", (user_id, message_id, time))
+        connect.commit()
+        print(f"{LOG}зарегистрирован новый пользователь")
+    else:
+        cursor.execute("""UPDATE users
+                          SET message = ?
+                          WHERE id = ?""", (message_id, user_id))
+        connect.commit()
+        print(f"{LOG}пользователь уже существует")
+    connect.close()
+
+    bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex)
