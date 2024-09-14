@@ -42,3 +42,16 @@ btn_change_group = InlineKeyboardButton(text="Изменить группу", ca
 btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
 
 back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
+
+# клавиатуры
+keyboard_complex = InlineKeyboardMarkup(row_width=1)
+keyboard_complex.add(btn_ros23, btn_blux91)
+
+keyboard_main = InlineKeyboardMarkup(row_width=1)
+keyboard_main.add( btn_week, btn_change_group)
+
+keyboard_week = InlineKeyboardMarkup(row_width=2)
+keyboard_week.add(btn_return_main)
+
+keyboard_error = InlineKeyboardMarkup()
+keyboard_error.add(btn_change_group)
