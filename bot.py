@@ -151,3 +151,16 @@ def start(message):
     connect.close()
 
     bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex)
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    print(f"Вызов: {call.data}")
+    user_id = call.message.chat.id
+    connect = sqlite3.connect(DB_PATH)
+    cursor = connect.cursor()
+
+    # ссылки на комплексы
+    complex_links = {
+        "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
+        "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
+    }
