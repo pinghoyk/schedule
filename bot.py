@@ -55,3 +55,72 @@ keyboard_week.add(btn_return_main)
 
 keyboard_error = InlineKeyboardMarkup()
 keyboard_error.add(btn_change_group)
+
+# проверка
+if os.path.exists(DB_PATH):
+    print(f'{LOG}бд есть!')
+else:
+    connect = sqlite3.connect(DB_PATH)
+    cursor = connect.cursor()
+    cursor.execute("""
+        CREATE TABLE users (
+            id INTEGER,
+            message INTEGER, 
+            groups INTEGER,
+            time_registration TIME,
+            complex TEXT
+        )
+    """)
+    connect.commit()
+    connect.close()
+    print(f"{LOG}бд создана")
+
+
+
+# функции
+def now_time(): # функция получения текущего времени по мск
+    now = datetime.now()
+    tz = pytz.timezone('Europe/Moscow')
+    now_moscow = now.astimezone(tz)
+    current_time = now_moscow.strftime("%H:%M")
+    current_date = now_moscow.strftime("%m.%d.%Y")
+    date = f"{current_date} {current_time}"
+    return date
+
+def user_group(user_id):
+    connect = sqlite3.connect(DB_PATH)
+    cursor = connect.cursor()
+    cursor.execute("SELECT groups FROM users WHERE id = ?", (int(user_id),))
+    group =list(cursor.fetchone()) # отправляем запрос в бд и ничего не меняя полоуучаем данные понятные пользователю
+    connect.close()
+    return group[0]
+
+def transform_week(text):
+    result = ""
+    for day in text:
+        result += f"*{day}*\n————————————————" 
+        lessons = text[day]
+        for lesson in lessons:
+            result += f"\n"
+            result += f"{lesson['number']}.  "
+            result += f"_{lesson['time_start']} - {lesson['time_finish']}_\n"
+            result += f"*Предмет:* __{lesson['name']}__\n"
+            for data in lesson["data"]:
+                teacher_name = data['teacher']
+                teacher_name = teacher_name.replace("отмена", "").strip()
+                result += f"_{teacher_name}_  "
+                result += f"*{data['classroom']}*\n"
+        result += "\n\n"
+    result = tg_markdown(result)
+    result = result.replace("???", "**???**")
+    return result
+
+def tg_markdown(text): # экранирование только для телеграма
+    special_characters = r'[]()>#+-=|{}.!'
+    escaped_text = ''
+    for char in text:
+        if char in special_characters:
+            escaped_text += f'\\{char}'
+        else:
+            escaped_text += char
+    return escaped_text
