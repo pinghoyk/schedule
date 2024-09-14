@@ -208,3 +208,38 @@ def callback_query(call):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
     elif call.data == "return_complex":
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard_complex)
+
+    if call.data.startswith("select_course_"):
+        course_number = call.data.split("_")[-1]
+        complex_choice = cursor.execute("SELECT complex FROM users WHERE id = ?", (user_id,)).fetchone()[0]
+        try:
+            x = parser.table_courses(complex_links[complex_choice])
+            groups = x[f'{course_number} курс']
+            keys = list(groups.keys())
+            buttons = []
+
+            for group in keys:
+                button = InlineKeyboardButton(text=f"{group}", callback_data=f"select_group_{group}")
+                buttons.append(button)
+
+
+
+            back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
+            
+            
+            keyboard_groups = InlineKeyboardMarkup(row_width=3)
+            keyboard_groups.add(*buttons)
+            keyboard_groups.add(back)
+
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите группу:", reply_markup=keyboard_groups)
+        except:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выбранный курс не найден :(", reply_markup= keyboard_error)
+
+    if call.data == "back_courses":
+                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
+
+
+
+
+print("бот запущен...")
+bot.polling()
