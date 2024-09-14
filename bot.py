@@ -164,3 +164,23 @@ def callback_query(call):
         "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
         "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
     }
+
+          # Выбор комплекса
+    if call.data == "ros_23":
+        complex_choice = "Российская 23"
+        cursor.execute("""UPDATE users
+                          SET complex = ?
+                          WHERE id = ?""", (complex_choice, user_id))
+        connect.commit()
+
+        # Получение курсов и создание кнопок
+        courses = parser.table_courses(complex_links[complex_choice])
+        buttons = []
+        for i in range(len(courses)):
+            button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
+            buttons.append(button)
+
+        # Создание клавиатуры с курсами
+        keyboard_courses = InlineKeyboardMarkup(row_width=2)
+        keyboard_courses.add(*buttons)
+        keyboard_courses.add(btn_return_complex)
