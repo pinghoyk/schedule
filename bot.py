@@ -21,3 +21,4 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 # Локальные модули
 import config
 import parser
+
