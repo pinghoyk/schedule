@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re
 
 
 def schedule(URL): # расписание
@@ -31,7 +32,10 @@ def schedule(URL): # расписание
                 lesson_time_finish = lesson_time_block[2].strip()
                 
                 try:
-                    lesson_name = lesson.find('div', class_='discHeader').text.strip()
+                    header_div = lesson.find('div', class_='discHeader')
+                    lesson_name = header_div.find('span').get('title')
+                    lesson_name = re.sub(r'\(.*?\)', '', lesson_name)
+                    lesson_name = lesson_name.strip()  # Убираем возможные пробелы по краям
                 except:
                     lesson_name = "Пары нет"
                 
