@@ -293,5 +293,4 @@ print("бот запущен...")
 try:
     bot.polling(none_stop=True)
 except Exception as e:
-    print(f"Ошибка: {e}", file=sys.stderr)
-    sys.exit(1)  # Завершаем скрипт с ошибкой
+    print(f"Ошибка: {e}")
