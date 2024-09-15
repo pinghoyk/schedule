@@ -222,10 +222,7 @@ def callback_query(call):
                 button = InlineKeyboardButton(text=f"{group}", callback_data=f"select_group_{group}")
                 buttons.append(button)
 
-
-
             back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
-            
             
             keyboard_groups = InlineKeyboardMarkup(row_width=3)
             keyboard_groups.add(*buttons)
@@ -234,8 +231,6 @@ def callback_query(call):
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите группу:", reply_markup=keyboard_groups)
         except:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выбранный курс не найден :(", reply_markup= keyboard_error)
-
-
 
     if call.data == "back_courses":
         complex_choice = cursor.execute("SELECT complex FROM users WHERE id = ?", (user_id,)).fetchone()[0]
@@ -269,6 +264,27 @@ def callback_query(call):
 
         print(f"{LOG}записана группа пользователя")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
+
+
+    if call.data == "select_week":
+        complex_choice = cursor.execute("SELECT complex FROM users WHERE id = ?", (user_id,)).fetchone()[0]
+        courses = parser.table_courses(complex_links[complex_choice])
+        group = user_group(call.message.chat.id)
+
+        year_start = int(group.split('-')[2])
+        course = YEAR - year_start
+        groups = (courses[f'{course} курс'])
+        url = (groups[group])
+        schedule_week = parser.schedule(f'https://pronew.chenk.ru/blocks/manage_groups/website/{url}')
+        text = transform_week(schedule_week)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
+
+    if call.data == "back_main":
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
+
+
+
+
 
 
 
