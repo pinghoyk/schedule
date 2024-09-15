@@ -235,8 +235,23 @@ def callback_query(call):
         except:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выбранный курс не найден :(", reply_markup= keyboard_error)
 
+
+
     if call.data == "back_courses":
-                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
+        complex_choice = cursor.execute("SELECT complex FROM users WHERE id = ?", (user_id,)).fetchone()[0]
+        courses = parser.table_courses(complex_links[complex_choice])
+        buttons = []
+        for i in range(len(courses)):
+            button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
+            buttons.append(button)
+
+        # Создание клавиатуры с курсами
+        keyboard_courses = InlineKeyboardMarkup(row_width=2)
+        keyboard_courses.add(*buttons)
+        keyboard_courses.add(btn_return_complex)
+
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
+
 
 
 
