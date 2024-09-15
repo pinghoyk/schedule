@@ -127,6 +127,29 @@ def tg_markdown(text): # экранирование только для теле
             escaped_text += char
     return escaped_text
 
+def get_week_schedule(complex_choice, user_group, parser, complex_links, YEAR):
+    # Получаем список курсов для данного комплекса
+    courses = parser.table_courses(complex_links[complex_choice])
+    group = user_group
+
+    year_start = int(group.split('-')[2])
+    course = YEAR - year_start
+
+    # Получаем группу по курсу и её URL
+    groups = courses.get(f'{course} курс', None)
+    if not groups or group not in groups:
+        return None  # Возвращаем None, если расписание не найдено
+
+    # Получаем URL для расписания на неделю
+    url = groups[group]
+    schedule_week = parser.schedule(f'https://pronew.chenk.ru/blocks/manage_groups/website/{url}')
+
+    # Возвращаем расписание на неделю
+    return schedule_week
+
+
+
+
 
 # команды
 @bot.message_handler(commands=['start'])
@@ -157,6 +180,7 @@ def start(message):
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
     print(f"Вызов: {call.data}")
+
     user_id = call.message.chat.id
     connect = sqlite3.connect(DB_PATH)
     cursor = connect.cursor()
@@ -167,7 +191,7 @@ def callback_query(call):
         "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
     }
 
-          # Выбор комплекса
+    # выбор комплекса
     if call.data == "ros_23":
         complex_choice = "Российская 23"
         cursor.execute("""UPDATE users
@@ -249,7 +273,6 @@ def callback_query(call):
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
 
-
     if (call.data).split("_")[0] == "select" and (call.data).split("_")[1] == "group":
         user_id = call.message.chat.id
 
@@ -267,22 +290,22 @@ def callback_query(call):
         print(f"{LOG}записана группа пользователя")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
-
     if call.data == "select_week":
+        user_id = call.message.chat.id
         complex_choice = cursor.execute("SELECT complex FROM users WHERE id = ?", (user_id,)).fetchone()[0]
-        courses = parser.table_courses(complex_links[complex_choice])
         group = user_group(call.message.chat.id)
 
-        year_start = int(group.split('-')[2])
-        course = YEAR - year_start
-        groups = (courses[f'{course} курс'])
-        url = (groups[group])
-        schedule_week = parser.schedule(f'https://pronew.chenk.ru/blocks/manage_groups/website/{url}')
-        text = transform_week(schedule_week)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
+        # Получаем расписание на неделю через функцию
+        weekly_schedule = get_week_schedule(complex_choice, group, parser, complex_links, YEAR)
+        
+        if weekly_schedule:
+            text = transform_week(weekly_schedule)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
+        else:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено", parse_mode="MarkdownV2")
 
     if call.data == "back_main":
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите группу:", reply_markup=keyboard_main)
 
 
 
