@@ -69,7 +69,8 @@ else:
             message INTEGER, 
             groups INTEGER,
             time_registration TIME,
-            complex TEXT
+            complex TEXT,
+            notification time_registration
         )
     """)
     connect.commit()
