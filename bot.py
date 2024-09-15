@@ -35,9 +35,7 @@ btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="
 btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="blux91")
 btn_return_complex = InlineKeyboardButton(text="Назад", callback_data="return_complex")
 
-btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
 btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
-btn_notification = InlineKeyboardButton(text="Получать уведомления", callback_data="select_notif")
 btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
 
 btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
@@ -49,7 +47,7 @@ keyboard_complex = InlineKeyboardMarkup(row_width=1)
 keyboard_complex.add(btn_ros23, btn_blux91)
 
 keyboard_main = InlineKeyboardMarkup(row_width=1)
-keyboard_main.add(btn_day, btn_week, btn_notification, btn_change_group)
+keyboard_main.add(btn_week, btn_change_group)
 
 keyboard_week = InlineKeyboardMarkup(row_width=2)
 keyboard_week.add(btn_return_main)
