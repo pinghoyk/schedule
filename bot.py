@@ -253,6 +253,23 @@ def callback_query(call):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard_courses)
 
 
+    if (call.data).split("_")[0] == "select" and (call.data).split("_")[1] == "group":
+        user_id = call.message.chat.id
+
+        groups = call.data.split('_')[2]
+
+        connect = sqlite3.connect(DB_PATH)
+        cursor = connect.cursor()
+        
+        cursor.execute("""UPDATE users
+                          SET groups = ?
+                          WHERE id = ?""", (groups, user_id))
+        connect.commit()
+        connect.close()
+
+        print(f"{LOG}записана группа пользователя")
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
+
 
 
 
