@@ -290,4 +290,8 @@ def callback_query(call):
 
 
 print("бот запущен...")
-bot.polling()
+try:
+    bot.polling(none_stop=True)
+except Exception as e:
+    print(f"Ошибка: {e}", file=sys.stderr)
+    sys.exit(1)  # Завершаем скрипт с ошибкой
