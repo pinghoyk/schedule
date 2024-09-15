@@ -104,7 +104,7 @@ def transform_week(text):
             result += f"\n"
             result += f"{lesson['number']}.  "
             result += f"_{lesson['time_start']} - {lesson['time_finish']}_\n"
-            result += f"*Предмет:* __{lesson['name']}__\n"
+            result += f"*Предмет: *{lesson['name']}\n"
             for data in lesson["data"]:
                 teacher_name = data['teacher']
                 teacher_name = teacher_name.replace("отмена", "").strip()
