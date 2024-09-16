@@ -7,11 +7,9 @@ def schedule(URL):  # расписание
     url = URL
     response = requests.get(url)
 
-    # Словарь для хранения данных
-    schedule_dict = {}
+    schedule_dict = {}  # Словарь для хранения данных
 
     if response.status_code == 200:
-        # Парсим содержимое страницы
         soup = BeautifulSoup(response.text, 'html.parser')
 
         schedule = soup.find('div', class_='timetableContainer')  # вся неделя
@@ -22,8 +20,7 @@ def schedule(URL):  # расписание
             day_schedule = day.find(
                 'div', attrs={'style': 'padding-left: 6px;'})  # расписание дня
 
-            # Список для хранения информации о занятиях в этот день
-            lessons_list = []
+            lessons_list = []  # Список для хранения информации о занятиях в этот день
 
             lessons = day_schedule.find_all(
                 'div', class_='lessonBlock')  # блок пар
@@ -46,8 +43,7 @@ def schedule(URL):  # расписание
                 except:
                     lesson_name = "Пары нет"
 
-                # Собираем информацию о паре
-                lesson_info = {
+                lesson_info = {  # Собираем информацию о паре
                     'number': lesson_number,
                     'time_start': lesson_time_start,
                     'time_finish': lesson_time_finish,
@@ -82,23 +78,19 @@ def schedule(URL):  # расписание
 def table_courses(url):  # получение всех групп и курсов
     response = requests.get(url)
 
-    # Парсим содержимое страницы
     soup = BeautifulSoup(response.text, 'html.parser')
     courses = soup.find_all('div', class_='spec-year-block-container')
 
-    # Словарь для хранения курсов и их групп
-    course_dict = {}
+    course_dict = {}  # Словарь для хранения курсов и их групп
 
-    # Перебираем все контейнеры курсов
-    for course in courses:
+    for course in courses:  # Перебираем все контейнеры курсов
         spec_course_blocks = course.find_all('div', class_='spec-year-block')
         for spec_course in spec_course_blocks:
             year_name = spec_course.find(
                 'span', class_='spec-year-name').text.strip()
             year_name = year_name.replace(":", '')
 
-            # Инициализируем пустой словарь для групп текущего курса
-            if year_name not in course_dict:
+            if year_name not in course_dict:  # Инициализируем пустой словарь для групп текущего курса
                 course_dict[year_name] = {}
 
             groups = spec_course.find_all('span', class_='group-block')
@@ -107,6 +99,5 @@ def table_courses(url):  # получение всех групп и курсо�
                 group_name = group_link_tag.text.strip()
                 group_link = group_link_tag['href'].strip()
 
-                # Добавляем группу и ссылку в словарь
                 course_dict[year_name][group_name] = group_link
     return course_dict
