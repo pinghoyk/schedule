@@ -22,8 +22,8 @@ COMPLEX_LINKS = {
 
 
 # кнопки
-btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="ros_23")
-btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="blux91")
+btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="complex_Российская 23")
+btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="complex_Блюхера 91")
 btn_return_complex = InlineKeyboardButton(text="Назад", callback_data="back_complex")
 
 
@@ -208,48 +208,15 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     cursor = connect.cursor()
 
 
-    if call.data == "ros_23": # выбор комплекса
-        complex_choice = "Российская 23"
-        cursor.execute("""UPDATE users
-                          SET complex = ?
-                          WHERE id = ?""", (complex_choice, user_id))
-        connect.commit()
+    if (call.data).split("_")[0] == "complex":  # выбор комплекса
+        complex_choice = (call.data).split("_")[1]
+        SQL_request("UPDATE users SET complex = ? WHERE id = ?", (complex_choice, user_id))
 
-        # Получение курсов и создание кнопок
-        courses = parser.table_courses(complex_links[complex_choice])
-        buttons = []
-        for i in range(len(courses)):
-            button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
-            buttons.append(button)
+        courses = parser.table_courses(COMPLEX_LINKS[complex_choice])
+        keyboard = keyboard_courses(courses)
 
-        # Создание клавиатуры с курсами
-        keyboard_courses = InlineKeyboardMarkup(row_width=2)
-        keyboard_courses.add(*buttons)
-        keyboard_courses.add(btn_return_complex)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard)
 
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                              text="Выберите курс:", reply_markup=keyboard_courses)
-    elif call.data == "blux91": # выбор комплекса
-        complex_choice = "Блюхера 91"
-        cursor.execute("""UPDATE users
-                          SET complex = ?
-                          WHERE id = ?""", (complex_choice, user_id))
-        connect.commit()
-
-        # Получение курсов и создание кнопок
-        courses = parser.table_courses(complex_links[complex_choice])
-        buttons = []
-        for i in range(len(courses)):
-            button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
-            buttons.append(button)
-
-        # Создание клавиатуры с курсами
-        keyboard_courses = InlineKeyboardMarkup(row_width=2)
-        keyboard_courses.add(*buttons)
-        keyboard_courses.add(btn_return_complex)
-
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                              text="Выберите курс:", reply_markup=keyboard_courses)
     elif call.data == "return_complex":
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text="Выберите комплекс:", reply_markup=keyboard_complex)
