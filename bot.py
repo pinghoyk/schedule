@@ -1,9 +1,3 @@
-# Стандартная библиотека Python
-"""
-    библиотека os - представляет функции для работы с операционной системой
-    модуль datetime - представляет классы для работы с датой и временем
-    sqlite3 - бд
-"""
 import parser
 import config
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -13,16 +7,8 @@ import os
 from datetime import datetime
 import sqlite3
 
-# Библиотеки сторонних разработчиков
-"""
-    pytz - позволяет работать с часовыми поясами
-    telebot - работа с ботом
-    типы для создания клавиатуры и кнопок
-"""
 
-# Локальные модули
-
-bot = telebot.TeleBot(config.API)
+bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
 DB_NAME = 'database.db'
@@ -37,11 +23,11 @@ btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="blux9
 btn_return_complex = InlineKeyboardButton(
     text="Назад", callback_data="return_complex")
 
+
 btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
 btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
 btn_change_group = InlineKeyboardButton(
     text="Изменить группу", callback_data="back_courses")
-
 
 btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
 
@@ -82,8 +68,7 @@ else:
             message INTEGER, 
             groups INTEGER,
             time_registration TIME,
-            complex TEXT,
-            -- notification TIME
+            complex TEXT
         )
     """)
     connect.commit()
@@ -102,17 +87,16 @@ def now_time():  # функция получения текущего време
     return date
 
 
-def user_group(user_id):
+def user_group(user_id): # получение группы пользователя
     connect = sqlite3.connect(DB_PATH)
     cursor = connect.cursor()
     cursor.execute("SELECT groups FROM users WHERE id = ?", (int(user_id),))
-    # отправляем запрос в бд и ничего не меняя полоуучаем данные понятные пользователю
     group = list(cursor.fetchone())
     connect.close()
     return group[0]
 
 
-def transform_week(text):
+def transform_week(text):  # разметка текста на неделю
     result = ""
     for day in text:
         result += f"*{day}*\n————————————————"
@@ -144,7 +128,7 @@ def tg_markdown(text):  # экранирование только для тел�
     return escaped_text
 
 
-def get_week_schedule(complex_choice, user_group, parser, complex_links, YEAR):
+def get_week_schedule(complex_choice, user_group, parser, complex_links, YEAR):  # получение расписания на неделю
     # Получаем список курсов для данного комплекса
     courses = parser.table_courses(complex_links[complex_choice])
     group = user_group
@@ -152,37 +136,30 @@ def get_week_schedule(complex_choice, user_group, parser, complex_links, YEAR):
     year_start = int(group.split('-')[2])
     course = YEAR - year_start
 
-    # Получаем группу по курсу и её URL
     groups = courses.get(f'{course} курс', None)
     if not groups or group not in groups:
-        return None  # Возвращаем None, если расписание не найдено
+        return None
 
-    # Получаем URL для расписания на неделю
     url = groups[group]
     schedule_week = parser.schedule(f'https://pronew.chenk.ru/blocks/manage_groups/website/{url}')
 
-    # Возвращаем расписание на неделю
     return schedule_week
 
 
-def get_day_schedule(complex_choice, user_group, parser, complex_links, YEAR, selected_day):
-    # Получаем список курсов для данного комплекса
+def get_day_schedule(complex_choice, user_group, parser, complex_links, YEAR, selected_day):  # получение расписания на выбранный день
     courses = parser.table_courses(complex_links[complex_choice])
     group = user_group
 
     year_start = int(group.split('-')[2])
     course = YEAR - year_start
 
-    # Получаем группу по курсу и её URL
     groups = courses.get(f'{course} курс', None)
     if not groups or group not in groups:
-        return None  # Возвращаем None, если расписание не найдено
+        return None
 
-    # Получаем URL для расписания на неделю
     url = groups[group]
     schedule_week = parser.schedule(f'https://pronew.chenk.ru/blocks/manage_groups/website/{url}')
 
-    # Получаем расписание на выбранный день
     day_schedule = {}
     for key in schedule_week.keys():
         if selected_day.lower() in key.lower():
@@ -191,7 +168,7 @@ def get_day_schedule(complex_choice, user_group, parser, complex_links, YEAR, se
     return day_schedule
 
 
-# команды
+# КОМАНДЫ
 @bot.message_handler(commands=['start'])
 def start(message):
     user_id = message.chat.id
@@ -220,21 +197,19 @@ def start(message):
 
 
 @bot.callback_query_handler(func=lambda call: True)
-def callback_query(call):
+def callback_query(call):  # работа с вызовами inline кнопок
     print(f"Вызов: {call.data}")
 
     user_id = call.message.chat.id
     connect = sqlite3.connect(DB_PATH)
     cursor = connect.cursor()
 
-    # ссылки на комплексы
     complex_links = {
         "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
         "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
     }
 
-    # выбор комплекса
-    if call.data == "ros_23":
+    if call.data == "ros_23": # выбор комплекса
         complex_choice = "Российская 23"
         cursor.execute("""UPDATE users
                           SET complex = ?
@@ -255,7 +230,7 @@ def callback_query(call):
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text="Выберите курс:", reply_markup=keyboard_courses)
-    elif call.data == "blux91":
+    elif call.data == "blux91": # выбор комплекса
         complex_choice = "Блюхера 91"
         cursor.execute("""UPDATE users
                           SET complex = ?
@@ -368,8 +343,7 @@ def callback_query(call):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text="Выберите день недели:", reply_markup=keyboard_days)
 
-    # Обработка выбора конкретного дня
-    if call.data.startswith("day_"):
+    if call.data.startswith("day_"): # Обработка выбора конкретного дня
         selected_day = call.data.split("_")[1]
         complex_choice = cursor.execute(
             "SELECT complex FROM users WHERE id = ?", (user_id,)).fetchone()[0]
@@ -382,9 +356,7 @@ def callback_query(call):
             text = transform_week(day_schedule)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                   text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
-
-    # Обработка кнопки "Назад" в расписании на день
-    if call.data == "day_back":
+    if call.data == "day_back":  # Обработка кнопки "Назад" в расписании на день
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text="Выберите день недели:", reply_markup=keyboard_days)
 
