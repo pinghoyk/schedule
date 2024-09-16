@@ -103,16 +103,6 @@ def now_time():  # функция получения текущего време
     return date
 
 
-def user_group(user_id): # получение группы пользователя
-    connect = sqlite3.connect(DB_PATH)
-    cursor = connect.cursor()
-    cursor.execute("SELECT groups FROM users WHERE id = ?", (int(user_id),))
-    group = list(cursor.fetchone())
-    connect.close()
-    return group[0]
-
-
-def transform_week(text):  # разметка текста на неделю
     result = ""
     for day in text:
         result += f"*{day}*\n————————————————"
