@@ -24,8 +24,7 @@ COMPLEX_LINKS = {
 # кнопки
 btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="ros_23")
 btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="blux91")
-btn_return_complex = InlineKeyboardButton(
-    text="Назад", callback_data="return_complex")
+btn_return_complex = InlineKeyboardButton(text="Назад", callback_data="back_complex")
 
 
 btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
@@ -36,7 +35,7 @@ btn_change_group = InlineKeyboardButton(
 btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
 
 days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]]
-btn_dayback = InlineKeyboardButton(text="Назад", callback_data="day_back")
+btn_dayback = InlineKeyboardButton(text="Назад", callback_data="back_day")
 
 back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
 
