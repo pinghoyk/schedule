@@ -30,6 +30,8 @@ DB_PATH = DB_NAME
 LOG = "Логи: "
 YEAR = 25
 
+
+
 # кнопки
 btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="ros_23")
 btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="blux91")
@@ -39,7 +41,13 @@ btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
 btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
 btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
 
+
+
+
 btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
+
+days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]]
+btn_dayback = InlineKeyboardButton(text="Назад", callback_data="day_back")
 
 back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
 
@@ -47,14 +55,21 @@ back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
 keyboard_complex.add(btn_ros23, btn_blux91)
 
-keyboard_main = InlineKeyboardMarkup(row_width=1)
+keyboard_main = InlineKeyboardMarkup(row_width=2)
 keyboard_main.add(btn_day, btn_week, btn_change_group)
 
 keyboard_week = InlineKeyboardMarkup(row_width=2)
 keyboard_week.add(btn_return_main)
 
+keyboard_days = InlineKeyboardMarkup(row_width=2)
+keyboard_days.add(*days_buttons, btn_dayback)
+
+keyboard_day_back = InlineKeyboardMarkup(row_width=1)
+keyboard_day_back.add(btn_dayback)
+
 keyboard_error = InlineKeyboardMarkup()
 keyboard_error.add(btn_change_group)
+
 
 # проверка
 if os.path.exists(DB_PATH):
