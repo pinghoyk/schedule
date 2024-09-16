@@ -29,8 +29,7 @@ btn_return_complex = InlineKeyboardButton(text="Назад", callback_data="back
 
 btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
 btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
-btn_change_group = InlineKeyboardButton(
-    text="Изменить группу", callback_data="back_courses")
+btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
 
 btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
 
