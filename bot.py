@@ -15,6 +15,10 @@ DB_NAME = 'database.db'
 DB_PATH = DB_NAME
 LOG = "Логи: "
 YEAR = 25
+COMPLEX_LINKS = {
+"Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
+"Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
+}
 
 
 # кнопки
@@ -204,10 +208,6 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     connect = sqlite3.connect(DB_PATH)
     cursor = connect.cursor()
 
-    complex_links = {
-        "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
-        "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
-    }
 
     if call.data == "ros_23": # выбор комплекса
         complex_choice = "Российская 23"
