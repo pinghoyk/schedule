@@ -48,7 +48,7 @@ keyboard_complex = InlineKeyboardMarkup(row_width=1)
 keyboard_complex.add(btn_ros23, btn_blux91)
 
 keyboard_main = InlineKeyboardMarkup(row_width=1)
-keyboard_main.add(btn_week, btn_change_group)
+keyboard_main.add(btn_day, btn_week, btn_change_group)
 
 keyboard_week = InlineKeyboardMarkup(row_width=2)
 keyboard_week.add(btn_return_main)
