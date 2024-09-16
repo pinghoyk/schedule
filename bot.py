@@ -135,19 +135,17 @@ def tg_markdown(text):  # экранирование только для тел�
     return escaped_text
 
 
-def get_week_schedule(complex_choice, user_group, parser, complex_links, YEAR):  # получение расписания на неделю
-    # Получаем список курсов для данного комплекса
-    courses = parser.table_courses(complex_links[complex_choice])
-    group = user_group
+def get_week_schedule(complex_choice, user_group):  # получение расписания на неделю
+    courses = parser.table_courses(COMPLEX_LINKS[complex_choice])
 
-    year_start = int(group.split('-')[2])
+    year_start = int(user_group.split('-')[2])
     course = YEAR - year_start
 
     groups = courses.get(f'{course} курс', None)
-    if not groups or group not in groups:
+    if not groups or user_group not in groups:
         return None
 
-    url = groups[group]
+    url = groups[user_group]
     schedule_week = parser.schedule(f'https://pronew.chenk.ru/blocks/manage_groups/website/{url}')
 
     return schedule_week
