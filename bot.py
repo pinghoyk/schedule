@@ -201,8 +201,7 @@ def start(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):  # работа с вызовами inline кнопок
-    print(f"Вызов: {call.data}")
-
+    # print(f"Вызов: {call.data}")
     user_id = call.message.chat.id
 
 
