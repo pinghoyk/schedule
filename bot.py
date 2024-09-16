@@ -204,8 +204,6 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     print(f"Вызов: {call.data}")
 
     user_id = call.message.chat.id
-    connect = sqlite3.connect(DB_PATH)
-    cursor = connect.cursor()
 
 
     if (call.data).split("_")[0] == "complex":  # выбор комплекса
