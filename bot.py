@@ -162,6 +162,16 @@ def get_day_schedule(complex_choice, user_group, selected_day):  # получе�
     return day_schedule
 
 
+def keyboard_courses(courses):  # создание клавиатуры с курсами
+    buttons = []
+    for i in range(len(courses)):
+        button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
+        buttons.append(button)
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    keyboard.add(*buttons)
+    keyboard.add(btn_return_complex)
+    return keyboard
+
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])
 def start(message):
