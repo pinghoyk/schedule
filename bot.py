@@ -57,7 +57,7 @@ keyboard_week = InlineKeyboardMarkup(row_width=2)
 keyboard_week.add(btn_return_main)
 
 keyboard_days = InlineKeyboardMarkup(row_width=2)
-keyboard_days.add(*days_buttons, btn_dayback)
+keyboard_days.add(*days_buttons, btn_return_main)
 
 keyboard_day_back = InlineKeyboardMarkup(row_width=1)
 keyboard_day_back.add(btn_dayback)
@@ -361,7 +361,7 @@ def callback_query(call):
 
     # Обработка кнопки "Назад" в расписании на день
     if call.data == "day_back":
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_main)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
 
 
 
