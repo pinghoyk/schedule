@@ -59,7 +59,7 @@ keyboard_error = InlineKeyboardMarkup()
 keyboard_error.add(btn_change_group)
 
 
-# проверка
+# ПРОВЕРКИ
 if os.path.exists(DB_PATH):
     print(f'{LOG}бд есть!')
 else:
@@ -196,8 +196,7 @@ def start(message):
         print(f"{LOG}пользователь уже существует")
     connect.close()
 
-    bot.send_message(message.chat.id, text="Выберите комплекс:",
-                     reply_markup=keyboard_complex)
+    bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex)
 
 
 @bot.callback_query_handler(func=lambda call: True)
