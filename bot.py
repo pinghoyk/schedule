@@ -161,6 +161,32 @@ def get_week_schedule(complex_choice, user_group, parser, complex_links, YEAR):
     # Возвращаем расписание на неделю
     return schedule_week
 
+def get_day_schedule(complex_choice, user_group, parser, complex_links, YEAR, selected_day):
+    # Получаем список курсов для данного комплекса
+    courses = parser.table_courses(complex_links[complex_choice])
+    group = user_group
+
+    year_start = int(group.split('-')[2])
+    course = YEAR - year_start
+
+    # Получаем группу по курсу и её URL
+    groups = courses.get(f'{course} курс', None)
+    if not groups or group not in groups:
+        return None  # Возвращаем None, если расписание не найдено
+
+    # Получаем URL для расписания на неделю
+    url = groups[group]
+    schedule_week = parser.schedule(f'https://pronew.chenk.ru/blocks/manage_groups/website/{url}')
+
+    # Получаем расписание на выбранный день
+    day_schedule = {}
+    for key in schedule_week.keys():
+        if selected_day.lower() in key.lower():
+            day_schedule[key] = schedule_week[key]
+    
+    return day_schedule
+
+
 
 
 
