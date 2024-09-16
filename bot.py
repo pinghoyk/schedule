@@ -192,6 +192,7 @@ def get_day_schedule(complex_choice, user_group, parser, complex_links, YEAR, se
 
 
 
+
 # команды
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -349,17 +350,24 @@ def callback_query(call):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
     if call.data == "select_day":
-    # Отправляем сообщение пользователю для выбора дня
-        keyboard_days = InlineKeyboardMarkup(row_width=2)
-        days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]]
-        keyboard_days.add(*days_buttons, btn_return_main)
-    
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
 
+    # Обработка выбора конкретного дня
     if call.data.startswith("day_"):
         selected_day = call.data.split("_")[1]
         complex_choice = cursor.execute("SELECT complex FROM users WHERE id = ?", (user_id,)).fetchone()[0]
         group = user_group(call.message.chat.id)
+
+        day_schedule = get_day_schedule(complex_choice, group, parser, complex_links, YEAR, selected_day)
+
+        if day_schedule:
+            text = transform_week(day_schedule)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
+
+    # Обработка кнопки "Назад" в расписании на день
+    if call.data == "day_back":
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_main)
+
 
 
 
