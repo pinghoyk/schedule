@@ -15,14 +15,11 @@ DB_NAME = 'database.db'
 DB_PATH = DB_NAME
 LOG = "Логи: "
 YEAR = 25
-<<<<<<< HEAD
 COMPLEX_LINKS = {
 "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
 }
 
-=======
->>>>>>> origin/main
 
 # кнопки
 btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="complex_Российская 23")
