@@ -28,8 +28,12 @@ def schedule(URL): # расписание
             for lesson in lessons:
                 lesson_time_block = lesson.find('div', class_='lessonTimeBlock').text.strip().split('\n')
                 lesson_number = lesson_time_block[0].strip()
-                lesson_time_start = lesson_time_block[1].strip()
-                lesson_time_finish = lesson_time_block[2].strip()
+                try:
+                    lesson_time_start = lesson_time_block[1].strip()
+                    lesson_time_finish = lesson_time_block[2].strip()
+                except:
+                    lesson_time_start = "???"
+                    lesson_time_finish = "???"
                 
                 try:
                     header_div = lesson.find('div', class_='discHeader')
@@ -99,5 +103,3 @@ def table_courses(url): # получение всех групп и курсов
                 # Добавляем группу и ссылку в словарь
                 course_dict[year_name][group_name] = group_link
     return course_dict
-
-
