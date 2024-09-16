@@ -79,7 +79,20 @@ else:
     print(f"{LOG}бд создана")
 
 
-# функции
+# ФУНКЦИИ
+def SQL_request(request, params=()):  # sql запросы
+    connect = sqlite3.connect(DB_PATH)
+    cursor = connect.cursor()
+    if request.strip().lower().startswith('select'):
+        cursor.execute(request, params)
+        result = cursor.fetchone()
+        return result
+    else:
+        cursor.execute(request, params)
+        connect.commit()
+    connect.close()
+
+
 def now_time():  # функция получения текущего времени по мск
     now = datetime.now()
     tz = pytz.timezone('Europe/Moscow')
