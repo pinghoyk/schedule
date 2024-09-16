@@ -292,3 +292,6 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     if call.data == "back_day":  # возврат на дни недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
 
+
+print(f"{LOG}бот запущен...")
+bot.polling(none_stop=True)
