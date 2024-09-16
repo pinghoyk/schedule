@@ -103,6 +103,7 @@ def now_time():  # функция получения текущего време
     return date
 
 
+def markup_text(text):  # разметка текста на неделю
     result = ""
     for day in text:
         result += f"*{day}*\n————————————————"
