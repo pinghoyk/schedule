@@ -69,7 +69,7 @@ else:
             groups INTEGER,
             time_registration TIME,
             complex TEXT,
-            notification time_registration
+            -- notification TIME
         )
     """)
     connect.commit()
@@ -145,6 +145,7 @@ def get_week_schedule(complex_choice, user_group, parser, complex_links, YEAR):
 
     # Возвращаем расписание на неделю
     return schedule_week
+
 
 
 
@@ -306,10 +307,18 @@ def callback_query(call):
     if call.data == "back_main":
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
+    if call.data == "select_day":
+    # Отправляем сообщение пользователю для выбора дня
+        keyboard_days = InlineKeyboardMarkup(row_width=2)
+        days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]]
+        keyboard_days.add(*days_buttons, btn_return_main)
+    
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
 
-
-
-
+    if call.data.startswith("day_"):
+        selected_day = call.data.split("_")[1]
+        complex_choice = cursor.execute("SELECT complex FROM users WHERE id = ?", (user_id,)).fetchone()[0]
+        group = user_group(call.message.chat.id)
 
 
 
