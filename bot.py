@@ -290,6 +290,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
             text = markup_text(day_schedule)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
+        else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено...", reply_markup=keyboard_day_back)
 
     if call.data == "back_complex":  # возврат в комплексы
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите комплекс:", reply_markup=keyboard_complex)
