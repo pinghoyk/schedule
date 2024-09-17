@@ -6,6 +6,7 @@ import pytz
 import os
 from datetime import datetime
 import sqlite3
+import time
 
 
 bot = telebot.TeleBot(config.API)  # создание бота
