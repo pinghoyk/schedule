@@ -6,7 +6,6 @@ import pytz
 import os
 from datetime import datetime
 import sqlite3
-import time
 
 
 bot = telebot.TeleBot(config.API)  # создание бота
@@ -174,13 +173,6 @@ def keyboard_courses(courses):  # создание клавиатуры с ку�
     return keyboard
 
 
-def loading_menu(chat_id, message_id):  # создание загрузочного сообщения
-    loading_message = bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="Загрузка...")
-    time.sleep(5)
-    return loading_message
-
-
-
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -219,7 +211,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     user_id = call.message.chat.id
 
     if (call.data).split("_")[0] == "complex":  # выбор комплекса
-        loading_message = loading_menu(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Получение курсов...")
         complex_choice = (call.data).split("_")[1]
         SQL_request("UPDATE users SET complex = ? WHERE id = ?", (complex_choice, user_id))
 
@@ -229,11 +221,10 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard)
 
     if call.data.startswith("select_course_"):  # выбор курса
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Получение групп...")
         course_number = call.data.split("_")[-1]
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
         complex_choice = user[4]
-
-        loading_message = loading_menu(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
         try:
             x = parser.table_courses(COMPLEX_LINKS[complex_choice])
@@ -266,6 +257,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
     if call.data == "select_week":  # расписание на неделю
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Загрузка расписания...")
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
         complex_choice = user[4]
         group = user[2]
@@ -273,16 +265,16 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         weekly_schedule = get_week_schedule(complex_choice, group)
 
         if weekly_schedule:
-            loading_message = loading_menu(chat_id=call.message.chat.id, message_id=call.message.message_id)
             text = markup_text(weekly_schedule)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
         else:
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено", parse_mode="MarkdownV2")
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено")
 
     if call.data == "select_day":  # выбор дня недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
 
     if call.data.startswith("day_"):  # обработка выбора конкретного дня
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Загрузка расписания...")
         selected_day = call.data.split("_")[1]
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
         complex_choice = user[4]
@@ -291,15 +283,15 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         day_schedule = get_day_schedule(complex_choice, group, selected_day)
 
         if day_schedule:
-            loading_message = loading_menu(chat_id=call.message.chat.id, message_id=call.message.message_id)
-
             text = markup_text(day_schedule)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
+        else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено...", reply_markup=keyboard_day_back)
 
     if call.data == "back_complex":  # возврат в комплексы
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите комплекс:", reply_markup=keyboard_complex)
 
     if call.data == "back_courses":  # возврат в курсы
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Получение курсов...")
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
         complex_choice = user[4]
         courses = parser.table_courses(COMPLEX_LINKS[complex_choice])
