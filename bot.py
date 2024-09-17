@@ -226,6 +226,11 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         course_number = call.data.split("_")[-1]
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
         complex_choice = user[4]
+
+
+        loading_message = loading_menu(chat_id=call.message.chat.id, message_id=call.message.message_id)
+
+
         try:
             x = parser.table_courses(COMPLEX_LINKS[complex_choice])
             groups = x[f'{course_number} курс']
@@ -264,6 +269,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         weekly_schedule = get_week_schedule(complex_choice, group)
 
         if weekly_schedule:
+            loading_message = loading_menu(chat_id=call.message.chat.id, message_id=call.message.message_id)
             text = markup_text(weekly_schedule)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
         else:
@@ -281,6 +287,8 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         day_schedule = get_day_schedule(complex_choice, group, selected_day)
 
         if day_schedule:
+            loading_message = loading_menu(chat_id=call.message.chat.id, message_id=call.message.message_id)
+
             text = markup_text(day_schedule)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
 
