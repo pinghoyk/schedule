@@ -172,6 +172,14 @@ def keyboard_courses(courses):  # создание клавиатуры с ку�
     keyboard.add(btn_return_complex)
     return keyboard
 
+def loading_menu(chat_id, message_id):
+    # Отправляем сообщение о загрузке
+    loading_message = bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="Загрузка...")
+    time.sleep(5)  # Симуляция долгой операции
+    return loading_message
+
+
+
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])
 def start(message):
