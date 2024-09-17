@@ -218,8 +218,8 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     # print(f"Вызов: {call.data}")
     user_id = call.message.chat.id
 
-
     if (call.data).split("_")[0] == "complex":  # выбор комплекса
+        loading_message = loading_menu(chat_id=call.message.chat.id, message_id=call.message.message_id)
         complex_choice = (call.data).split("_")[1]
         SQL_request("UPDATE users SET complex = ? WHERE id = ?", (complex_choice, user_id))
 
@@ -233,9 +233,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
         complex_choice = user[4]
 
-
         loading_message = loading_menu(chat_id=call.message.chat.id, message_id=call.message.message_id)
-
 
         try:
             x = parser.table_courses(COMPLEX_LINKS[complex_choice])
