@@ -185,7 +185,7 @@ def loading_menu(chat_id, message_id):
 def start(message):
     user_id = message.chat.id
     message_id = message.id
-    time = now_time()
+    times = now_time()
 
     connect = sqlite3.connect(DB_PATH)
     cursor = connect.cursor()
@@ -193,7 +193,7 @@ def start(message):
     cursor.execute("SELECT 1 FROM users WHERE id = ?", (user_id,))
     if cursor.fetchone() is None:
         cursor.execute("""INSERT INTO users (id, message, time_registration)
-                          VALUES (?, ?, ?)""", (user_id, message_id, time))
+                          VALUES (?, ?, ?)""", (user_id, message_id, times))
         connect.commit()
         print(f"{LOG}зарегистрирован новый пользователь")
     else:
