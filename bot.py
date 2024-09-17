@@ -184,28 +184,33 @@ def loading_menu(chat_id, message_id):  # создание загрузочно�
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])
 def start(message):
+    if message.chat.id in LAST_MESSAGE:  # удаляет последнее сообщене пользователя
+        try:
+            bot.delete_message(message.chat.id, LAST_MESSAGE[message.chat.id])
+        except:
+            pass
+
     user_id = message.chat.id
-    message_id = message.id
+    message_id = message.message_id
+
     times = now_time()
 
-    connect = sqlite3.connect(DB_PATH)
-    cursor = connect.cursor()
-
-    cursor.execute("SELECT 1 FROM users WHERE id = ?", (user_id,))
-    if cursor.fetchone() is None:
-        cursor.execute("""INSERT INTO users (id, message, time_registration)
-                          VALUES (?, ?, ?)""", (user_id, message_id, times))
+    with sqlite3.connect(DB_PATH) as connect:
+        cursor = connect.cursor()
+        cursor.execute("SELECT 1 FROM users WHERE id = ?", (user_id,))
+        if cursor.fetchone() is None:
+            cursor.execute("""INSERT INTO users (id, message, time_registration)
+                              VALUES (?, ?, ?)""", (user_id, message_id, times))
+            print(f"{LOG}зарегистрирован новый пользователь")
+        else:
+            cursor.execute("""UPDATE users
+                              SET message = ?
+                              WHERE id = ?""", (message_id, user_id))
+            print(f"{LOG}пользователь уже существует")
         connect.commit()
-        print(f"{LOG}зарегистрирован новый пользователь")
-    else:
-        cursor.execute("""UPDATE users
-                          SET message = ?
-                          WHERE id = ?""", (message_id, user_id))
-        connect.commit()
-        print(f"{LOG}пользователь уже существует")
-    connect.close()
 
-    bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex)
+    LAST_MESSAGE[message.chat.id] = bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex).message_id
+    bot.delete_message(message.chat.id, message.message_id)
 
 
 @bot.callback_query_handler(func=lambda call: True)
