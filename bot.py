@@ -315,5 +315,11 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
 
 
+@bot.message_handler(func=lambda message: True)
+def handle_text_message(message): # удаляет сообщения от пользователя
+    bot.delete_message(message.chat.id, message.message_id)
+
+
+
 print(f"{LOG}бот запущен...")
 bot.polling(none_stop=True)
