@@ -212,7 +212,7 @@ def day_commads(message, tomorrow = None):
         complex_choice = user[4]
         group = user[2]
         day = now_day(tomorrow) 
-        schedule = get_today_schedule(complex_choice, group, day)
+        schedule = get_day_schedule(complex_choice, group, day)
     
         if schedule:
               text = markup_text(schedule)
