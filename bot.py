@@ -256,46 +256,9 @@ def start(message):
 
 @bot.message_handler(commands=['today'])  # обработка команды today
 def send_today_schedule(message):
-    user_id = message.chat.id
-    delete_last_message(bot, message.chat.id)
-
-    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
-    if not user:
-        bot.send_message(message.chat.id, 'Вы не зарегистрированы. Пожалуйста, выберите комплекс и группу.')
-        return
-    
-    complex_choice = user[4]
-    group = user[2] 
-
-    schedule = get_today_schedule(complex_choice, group, "сегодня")
-
-    if schedule:
-          text = markup_text(schedule)
-          bot.send_message(message.chat.id, text, reply_markup=keyboard_command, parse_mode="MarkdownV2")
-    else:
-          bot.send_message(message.chat.id, 'Расписание на сегодня не найдено.', reply_markup=keyboard_days)
-
 
 @bot.message_handler(commands=['tomorrow'])  # обработка команды toworrow
 def send_tomorrow_schedule(message):
-    user_id = message.chat.id
-    delete_last_message(bot, message.chat.id)
-
-    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
-    if not user:
-        bot.send_message(message.chat.id, 'Вы не зарегистрированы. Пожалуйста, выберите комплекс и группу.')
-        return
-    
-    complex_choice = user[4]
-    group = user[2]
-
-    schedule = get_today_schedule(complex_choice, group, "завтра")
-    
-    if schedule:
-          text = markup_text(schedule)
-          bot.send_message(message.chat.id, text, reply_markup=keyboard_command, parse_mode="MarkdownV2")
-    else:
-          bot.send_message(message.chat.id, 'Расписание на сегодня не найдено.', reply_markup=keyboard_days)
 
 
 @bot.callback_query_handler(func=lambda call: True)
