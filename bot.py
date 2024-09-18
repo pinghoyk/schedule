@@ -42,7 +42,7 @@ btn_change_group = InlineKeyboardButton(text="Изменить группу", ca
 
 btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
 
-days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]]
+days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in DAYS]
 btn_dayback = InlineKeyboardButton(text="Назад", callback_data="back_day")
 
 back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
