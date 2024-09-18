@@ -21,6 +21,13 @@ COMPLEX_LINKS = {
 }
 LAST_MESSAGE = {}
 
+commands = [
+telebot.types.BotCommand("start", "Запустить бота"),
+telebot.types.BotCommand("today", "Расписание на сегодня"),
+telebot.types.BotCommand("tommorow", "Расписание на завтра"),
+]
+
+bot.set_my_commands(commands)
 
 # кнопки
 btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="complex_Российская 23")
@@ -112,15 +119,19 @@ def markup_text(text):  # разметка текста на неделю
             result += f"\n"
             result += f"{lesson['number']}.  "
             result += f"_{lesson['time_start']} - {lesson['time_finish']}_\n"
-            result += f"*Предмет: *{lesson['name']}\n"
-            for data in lesson["data"]:
-                teacher_name = f"*Преподаватель: * {data['teacher']}"
-                teacher_name = teacher_name.replace("отмена", "").strip()
-                result += f"_{teacher_name}_  "
-                result += f"*{data['classroom']}*\n"
+            
+            # Перебираем все уроки в одно время
+            for l in lesson['lessons']:
+                result += f"*Предмет: *{l['name']}\n"
+                for data in l["data"]:
+                    teacher_name = f"*Преподаватель: * {data['teacher']}"
+                    teacher_name = teacher_name.replace("отмена", "").strip()
+                    result += f"_{teacher_name}_  "
+                    result += f"*{data['classroom']}*\n"
         result += "\n\n"
-    result = tg_markdown(result)
-    result = result.replace("???", "**???**")
+    
+    result = tg_markdown(result)  # Применяем функцию для обработки markdown в Telegram
+    result = result.replace("???", "**???**")  # Подсвечиваем "???", если время неизвестно
     return result
 
 
@@ -171,6 +182,7 @@ def keyboard_courses(courses):  # создание клавиатуры с ку�
     keyboard.add(*buttons)
     keyboard.add(btn_return_complex)
     return keyboard
+
 
 
 # КОМАНДЫ
@@ -303,12 +315,11 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
     if call.data == "back_day":  # возврат на дни недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
-
+        
 
 @bot.message_handler(func=lambda message: True)
 def handle_text_message(message): # удаляет сообщения от пользователя
     bot.delete_message(message.chat.id, message.message_id)
-
 
 
 print(f"{LOG}бот запущен...")
