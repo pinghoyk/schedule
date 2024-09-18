@@ -21,7 +21,7 @@ COMPLEX_LINKS = {
 }
 
 commands = [
-telebot.types.BotCommand("start", "Запустить бота"),
+telebot.types.BotCommand("start", "Перезапуск"),
 telebot.types.BotCommand("today", "Расписание на сегодня"),
 telebot.types.BotCommand("tomorrow", "Расписание на завтра"),
 ]
