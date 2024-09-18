@@ -66,9 +66,6 @@ keyboard_day_back.add(btn_dayback)
 keyboard_error = InlineKeyboardMarkup()
 keyboard_error.add(btn_change_group)
 
-keyboard_command = InlineKeyboardMarkup()
-keyboard_command.add(btn_dayback)
-
 
 # ПРОВЕРКИ
 if os.path.exists(DB_PATH):
