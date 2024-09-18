@@ -35,33 +35,43 @@ def schedule(URL):  # расписание
                     lesson_time_start = "???"
                     lesson_time_finish = "???"
 
-                try:
-                    header_div = lesson.find('div', class_='discHeader')
-                    lesson_name = header_div.find('span').get('title')
-                    lesson_name = re.sub(r'\(.*?\)', '', lesson_name)
-                    lesson_name = lesson_name.strip()  # Убираем возможные пробелы по краям
-                except:
-                    lesson_name = "Пары нет"
-
-                lesson_info = {  # Собираем информацию о паре
+                # Проверяем, есть ли несколько уроков на одно время
+                lesson_info = {
                     'number': lesson_number,
                     'time_start': lesson_time_start,
                     'time_finish': lesson_time_finish,
-                    'name': lesson_name,
-                    'data': []
+                    'lessons': []
                 }
 
-                # Находим все блоки discSubgroup, содержащие информацию о преподавателях и кабинетах
-                lesson_teachers_data = lesson.find_all(
-                    'div', class_='discSubgroup')
-                for subgroup in lesson_teachers_data:
-                    teacher = subgroup.find(
-                        'div', class_='discSubgroupTeacher').text.strip()
-                    classroom = subgroup.find(
-                        'div', class_='discSubgroupClassroom').text.strip()
-                    lesson_info['data'].append({
-                        'teacher': teacher,
-                        'classroom': classroom
+                # Находим все уроки, которые могут быть в одно время
+                discBlocks = lesson.find_all('div', class_='discBlock')
+                for discBlock in discBlocks:
+                    if 'cancelled' in discBlock.get('class', []): # Проверяем, есть ли класс 'cancelled', и игнорируем такие блоки
+                        continue
+
+                    header_div = discBlock.find('div', class_='discHeader')
+                    try:
+                        lesson_name = header_div.find('span').get('title')
+                        lesson_name = re.sub(r'\(.*?\)', '', lesson_name)
+                        lesson_name = lesson_name.strip()  # Убираем пробелы
+                    except:
+                        lesson_name = "Пары нет"
+
+                    lesson_teachers_data = discBlock.find_all('div', class_='discSubgroup')
+                    lesson_data = []
+                    for subgroup in lesson_teachers_data:
+                        teacher = subgroup.find(
+                            'div', class_='discSubgroupTeacher').text.strip()
+                        classroom = subgroup.find('div', class_='discSubgroupClassroom').text.strip()
+                        classroom = classroom.replace("???", '')
+                        lesson_data.append({
+                            'teacher': teacher,
+                            'classroom': classroom
+                        })
+                    
+                    lesson_info['lessons'].append({
+                        'name': lesson_name,
+                        'data': lesson_data
                     })
 
                 lessons_list.append(lesson_info)
