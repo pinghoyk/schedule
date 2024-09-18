@@ -110,6 +110,14 @@ def now_time():  # функция получения текущего време
     date = f"{current_date} {current_time}"
     return date
 
+def now_day(day = None):
+    today = datetime.today().weekday()
+    if day == "tomorrow": 
+        today += 1
+    if today == 6: 
+        today == 1
+    return DAYS[today]
+
 
 def markup_text(text):  # разметка текста на неделю
     result = ""
