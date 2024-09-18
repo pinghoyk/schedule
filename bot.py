@@ -217,7 +217,7 @@ def get_today_schedule(complex_choice, user_group, selected_day): # получе
 
 
 # КОМАНДЫ
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['start'])  # обработка команды start
 def start(message):
     user_id = message.chat.id
     message_id = message.message_id
@@ -238,6 +238,48 @@ def start(message):
     bot.delete_message(message.chat.id, message_id)
 
 
+@bot.message_handler(commands=['today'])  # обработка команды today
+def send_today_schedule(message):
+    user_id = message.chat.id
+    delete_last_message(bot, message.chat.id)
+
+    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
+    if not user:
+        bot.send_message(message.chat.id, 'Вы не зарегистрированы. Пожалуйста, выберите комплекс и группу.')
+        return
+    
+    complex_choice = user[4]
+    group = user[2] 
+
+    schedule = get_today_schedule(complex_choice, group, "сегодня")
+
+    if schedule:
+          text = markup_text(schedule)
+          bot.send_message(message.chat.id, text, reply_markup=keyboard_command, parse_mode="MarkdownV2")
+    else:
+          bot.send_message(message.chat.id, 'Расписание на сегодня не найдено.', reply_markup=keyboard_days)
+
+
+@bot.message_handler(commands=['tomorrow'])  # обработка команды toworrow
+def send_tomorrow_schedule(message):
+    user_id = message.chat.id
+    delete_last_message(bot, message.chat.id)
+
+    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
+    if not user:
+        bot.send_message(message.chat.id, 'Вы не зарегистрированы. Пожалуйста, выберите комплекс и группу.')
+        return
+    
+    complex_choice = user[4]
+    group = user[2]
+
+    schedule = get_today_schedule(complex_choice, group, "завтра")
+    
+    if schedule:
+          text = markup_text(schedule)
+          bot.send_message(message.chat.id, text, reply_markup=keyboard_command, parse_mode="MarkdownV2")
+    else:
+          bot.send_message(message.chat.id, 'Расписание на сегодня не найдено.', reply_markup=keyboard_days)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -339,50 +381,6 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     if call.data == "back_day":  # возврат на дни недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
         
-
-@bot.message_handler(commands=['today'])
-def send_today_schedule(message):
-    user_id = message.chat.id
-    delete_last_message(bot, message.chat.id)
-
-    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
-    if not user:
-        bot.send_message(message.chat.id, 'Вы не зарегистрированы. Пожалуйста, выберите комплекс и группу.')
-        return
-    
-    complex_choice = user[4]
-    group = user[2] 
-
-    schedule = get_today_schedule(complex_choice, group, "сегодня")
-
-    if schedule:
-          text = markup_text(schedule)
-          bot.send_message(message.chat.id, text, reply_markup=keyboard_command, parse_mode="MarkdownV2")
-    else:
-          bot.send_message(message.chat.id, 'Расписание на сегодня не найдено.', reply_markup=keyboard_days)
-
-
-@bot.message_handler(commands=['tomorrow'])
-def send_tomorrow_schedule(message):
-    user_id = message.chat.id
-    delete_last_message(bot, message.chat.id)
-
-    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
-    if not user:
-        bot.send_message(message.chat.id, 'Вы не зарегистрированы. Пожалуйста, выберите комплекс и группу.')
-        return
-    
-    complex_choice = user[4]
-    group = user[2]
-
-    schedule = get_today_schedule(complex_choice, group, "завтра")
-    
-    if schedule:
-          text = markup_text(schedule)
-          bot.send_message(message.chat.id, text, reply_markup=keyboard_command, parse_mode="MarkdownV2")
-    else:
-          bot.send_message(message.chat.id, 'Расписание на сегодня не найдено.', reply_markup=keyboard_days)
-
 
 @bot.message_handler(func=lambda message: True)
 def handle_text_message(message): # удаляет сообщения от пользователя
