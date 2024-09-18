@@ -196,27 +196,7 @@ def keyboard_courses(courses):  # создание клавиатуры с ку�
 def get_today_schedule(complex_choice, user_group, selected_day): # получение расписания на конкретный день
     # Получаем расписание на неделю
     schedule_week = get_week_schedule(complex_choice, user_group)
-
-    # Словарь для сопоставления дней недели на русском языке
-    day_mapping = {
-        0: "Понедельник",
-        1: "Вторник",
-        2: "Среда",
-        3: "Четверг",
-        4: "Пятница",
-        5: "Суббота",
-    }
-
-    if selected_day == "сегодня":
-        today_index = datetime.now().weekday()
-        selected_day = day_mapping[today_index]
-
-    elif selected_day == "завтра":
-        tomorrow_index = (datetime.now() + timedelta(days=1)).weekday()
-        selected_day = day_mapping[tomorrow_index]
-
     selected_day = selected_day.lower()
-
     day_schedule = {}
     for key in schedule_week.keys():
         if selected_day in key.lower():
