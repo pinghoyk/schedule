@@ -194,18 +194,6 @@ def keyboard_courses(courses):  # создание клавиатуры с ку�
     return keyboard
 
 
-def get_today_schedule(complex_choice, user_group, selected_day): # получение расписания на конкретный день
-    # Получаем расписание на неделю
-    schedule_week = get_week_schedule(complex_choice, user_group)
-    selected_day = selected_day.lower()
-    day_schedule = {}
-    for key in schedule_week.keys():
-        if selected_day in key.lower():
-            day_schedule[key] = schedule_week[key]
-
-    return day_schedule
-
-
 def day_commads(message, tomorrow = None):
     bot.delete_message(message.chat.id, message.message_id)
     user_id = message.chat.id
