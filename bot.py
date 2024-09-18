@@ -238,8 +238,6 @@ def start(message):
     bot.delete_message(message.chat.id, message_id)
 
 
-    LAST_MESSAGE[message.chat.id] = bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex).message_id
-    bot.delete_message(message.chat.id, message.message_id)
 
 
 @bot.callback_query_handler(func=lambda call: True)
