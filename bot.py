@@ -223,20 +223,20 @@ def start(message):
     message_id = message.message_id
 
     times = now_time()
+    user = SQL_request("SELECT 0 FROM users WHERE id = ?", (user_id,))
+    if user is None:
+        SQL_request("""INSERT INTO users (id, message, time_registration)
+                          VALUES (?, ?, ?)""", (user_id, message_id+1, times))
+        print(f"{LOG}зарегистрирован новый пользователь")
+    else:
+        menu_id = SQL_request("SELECT message FROM users WHERE id = ?", (user_id,))  # получение id меню
+        try: bot.delete_message(message.chat.id, menu_id[0])  # обработка ошибки, если чат пустой, но пользователь есть в базе
+        except Exception as e: print(f"{ERROR}{e}")  # вывод текста ошибки
+        SQL_request("""UPDATE users SET message = ? WHERE id = ?""", (message_id+1, user_id))  # добавление id нового меню
+        print(f"{LOG}пользователь уже существует")
+    bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex)
+    bot.delete_message(message.chat.id, message_id)
 
-    with sqlite3.connect(DB_PATH) as connect:
-        cursor = connect.cursor()
-        cursor.execute("SELECT 1 FROM users WHERE id = ?", (user_id,))
-        if cursor.fetchone() is None:
-            cursor.execute("""INSERT INTO users (id, message, time_registration)
-                              VALUES (?, ?, ?)""", (user_id, message_id, times))
-            print(f"{LOG}зарегистрирован новый пользователь")
-        else:
-            cursor.execute("""UPDATE users
-                              SET message = ?
-                              WHERE id = ?""", (message_id, user_id))
-            print(f"{LOG}пользователь уже существует")
-        connect.commit()
 
     LAST_MESSAGE[message.chat.id] = bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex).message_id
     bot.delete_message(message.chat.id, message.message_id)
