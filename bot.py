@@ -1,6 +1,7 @@
 import parser
 import config
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+from telebot import types
 import telebot
 import pytz
 import os
