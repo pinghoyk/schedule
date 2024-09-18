@@ -256,9 +256,11 @@ def start(message):
 
 @bot.message_handler(commands=['today'])  # обработка команды today
 def send_today_schedule(message):
+    day_commads(message)
 
 @bot.message_handler(commands=['tomorrow'])  # обработка команды toworrow
 def send_tomorrow_schedule(message):
+    day_commads(message, "tomorrow")
 
 
 @bot.callback_query_handler(func=lambda call: True)
