@@ -216,20 +216,6 @@ def get_today_schedule(complex_choice, user_group, selected_day): # получе
     return day_schedule
 
 
-def delete_last_message(bot, chat_id): # удаляет сообщение
-
-    if chat_id in LAST_MESSAGE:
-        try:
-            bot.delete_message(chat_id, LAST_MESSAGE[chat_id])
-            del LAST_MESSAGE[chat_id] 
-        except telebot.apihelper.ApiTelegramException as e:
-            print(f"Ошибка при удалении сообщения: {e}")
-        except KeyError:
-            print(f"Сообщение с id {chat_id} не найдено в LAST_MESSAGE")
-        except Exception as e:
-            print(f"Произошла неизвестная ошибка: {e}")
-
-
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])
 def start(message):
