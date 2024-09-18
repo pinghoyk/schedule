@@ -13,7 +13,6 @@ bot = telebot.TeleBot(config.API)  # создание бота
 # глобальные переменные
 DB_NAME = 'database.db'
 DB_PATH = DB_NAME
-LOG = "Логи: "
 YEAR = 25
 COMPLEX_LINKS = {
 "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
@@ -22,7 +21,8 @@ COMPLEX_LINKS = {
 
 DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
 
-commands = [
+LOG = "Логи: "
+
 telebot.types.BotCommand("start", "Перезапуск"),
 telebot.types.BotCommand("today", "Расписание на сегодня"),
 telebot.types.BotCommand("tomorrow", "Расписание на завтра"),
