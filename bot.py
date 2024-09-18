@@ -205,6 +205,33 @@ def get_today_schedule(complex_choice, user_group, selected_day): # получе
     return day_schedule
 
 
+def day_commads(message, tomorrow = None):
+    bot.delete_message(message.chat.id, message.message_id)
+    user_id = message.chat.id
+
+    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
+
+    if user[4] == None: 
+        bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text="Сначала выберите корпус!", reply_markup=keyboard_complex)
+    elif user[2] == None:
+        courses = parser.table_courses(COMPLEX_LINKS[user[4]])
+        keyboard = keyboard_courses(courses)
+        bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text="Сначала выберите группу!", reply_markup=keyboard)
+    else: 
+        bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text="Загрузка расписания...")
+
+        complex_choice = user[4]
+        group = user[2]
+        day = now_day(tomorrow) 
+        schedule = get_today_schedule(complex_choice, group, day)
+    
+        if schedule:
+              text = markup_text(schedule)
+              bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
+        else:
+              bot.edit_message_text(message.chat.id, message_id=user[1], text="Расписание на сегодня не найдено", reply_markup=keyboard_day_back)
+
+
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])  # обработка команды start
 def start(message):
