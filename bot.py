@@ -27,8 +27,6 @@ telebot.types.BotCommand("today", "Расписание на сегодня"),
 telebot.types.BotCommand("tomorrow", "Расписание на завтра"),
 ]
 
-bot.set_my_commands(commands)
-
 # кнопки
 btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="complex_Российская 23")
 btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="complex_Блюхера 91")
@@ -409,6 +407,6 @@ def send_tomorrow_schedule(message):
 def handle_text_message(message): # удаляет сообщения от пользователя
     bot.delete_message(message.chat.id, message.message_id)
 
-
+bot.set_my_commands(commands)
 print(f"{LOG}бот запущен...")
 bot.polling(none_stop=True)
