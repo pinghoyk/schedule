@@ -20,6 +20,8 @@ COMPLEX_LINKS = {
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
 }
 
+DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
+
 commands = [
 telebot.types.BotCommand("start", "Перезапуск"),
 telebot.types.BotCommand("today", "Расписание на сегодня"),
