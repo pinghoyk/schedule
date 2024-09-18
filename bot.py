@@ -19,7 +19,6 @@ COMPLEX_LINKS = {
 "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
 }
-LAST_MESSAGE = {}
 
 commands = [
 telebot.types.BotCommand("start", "Запустить бота"),
