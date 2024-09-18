@@ -4,7 +4,7 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 import telebot
 import pytz
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 
 
@@ -19,15 +19,15 @@ COMPLEX_LINKS = {
 "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
 }
+LAST_MESSAGE = {}
+
 commands = [
 telebot.types.BotCommand("start", "Запустить бота"),
 telebot.types.BotCommand("today", "Расписание на сегодня"),
-telebot.types.BotCommand("tommorow", "Расписание на завтра"),
+telebot.types.BotCommand("tomorrow", "Расписание на завтра"),
 ]
+
 bot.set_my_commands(commands)
-
-LAST_MESSAGE = {}
-
 
 # кнопки
 btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="complex_Российская 23")
@@ -64,6 +64,9 @@ keyboard_day_back.add(btn_dayback)
 
 keyboard_error = InlineKeyboardMarkup()
 keyboard_error.add(btn_change_group)
+
+keyboard_command = InlineKeyboardMarkup()
+keyboard_command.add(btn_dayback)
 
 
 # ПРОВЕРКИ
@@ -184,9 +187,11 @@ def keyboard_courses(courses):  # создание клавиатуры с ку�
     return keyboard
 
 
-def get_today_schedule(complex_choice, user_group, selected_day):
+def get_today_schedule(complex_choice, user_group, selected_day): # получение расписания на конкретный день
+    # Получаем расписание на неделю
     schedule_week = get_week_schedule(complex_choice, user_group)
 
+    # Словарь для сопоставления дней недели на русском языке
     day_mapping = {
         0: "Понедельник",
         1: "Вторник",
@@ -197,11 +202,11 @@ def get_today_schedule(complex_choice, user_group, selected_day):
     }
 
     if selected_day == "сегодня":
-        today_index = datetime.now().weekday()  # Получаем номер дня недели (0 — понедельник, 6 — воскресенье)
+        today_index = datetime.now().weekday()
         selected_day = day_mapping[today_index]
 
     elif selected_day == "завтра":
-        tomorrow_index = (datetime.now() + timedelta(days=1)).weekday()  # Получаем номер завтрашнего дня
+        tomorrow_index = (datetime.now() + timedelta(days=1)).weekday()
         selected_day = day_mapping[tomorrow_index]
 
     selected_day = selected_day.lower()
@@ -214,15 +219,24 @@ def get_today_schedule(complex_choice, user_group, selected_day):
     return day_schedule
 
 
+def delete_last_message(bot, chat_id): # удаляет сообщение
+
+    if chat_id in LAST_MESSAGE:
+        try:
+            bot.delete_message(chat_id, LAST_MESSAGE[chat_id])
+            del LAST_MESSAGE[chat_id] 
+        except telebot.apihelper.ApiTelegramException as e:
+            print(f"Ошибка при удалении сообщения: {e}")
+        except KeyError:
+            print(f"Сообщение с id {chat_id} не найдено в LAST_MESSAGE")
+        except Exception as e:
+            print(f"Произошла неизвестная ошибка: {e}")
+
 
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])
 def start(message):
-    if message.chat.id in LAST_MESSAGE:  # удаляет последнее сообщене пользователя
-        try:
-            bot.delete_message(message.chat.id, LAST_MESSAGE[message.chat.id])
-        except:
-            pass
+    delete_last_message(bot, message.chat.id)
 
     user_id = message.chat.id
     message_id = message.message_id
@@ -345,7 +359,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
     if call.data == "back_day":  # возврат на дни недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
-
+        
 
 @bot.message_handler(commands=['today'])
 def send_today_schedule(message):
@@ -389,6 +403,7 @@ def send_tomorrow_schedule(message):
           bot.send_message(message.chat.id, text, reply_markup=keyboard_command, parse_mode="MarkdownV2")
     else:
           bot.send_message(message.chat.id, 'Расписание на сегодня не найдено.', reply_markup=keyboard_days)
+
 
 @bot.message_handler(func=lambda message: True)
 def handle_text_message(message): # удаляет сообщения от пользователя
