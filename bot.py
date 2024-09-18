@@ -219,8 +219,6 @@ def get_today_schedule(complex_choice, user_group, selected_day): # получе
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])
 def start(message):
-    delete_last_message(bot, message.chat.id)
-
     user_id = message.chat.id
     message_id = message.message_id
 
