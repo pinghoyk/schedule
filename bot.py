@@ -29,6 +29,7 @@ commands = [  # команды бота
 telebot.types.BotCommand("start", "Перезапуск"),
 telebot.types.BotCommand("today", "Расписание на сегодня"),
 telebot.types.BotCommand("tomorrow", "Расписание на завтра"),
+telebot.types.BotCommand("week", "Расписание на всю неделю"),
 ]
 
 # кнопки
@@ -255,6 +256,17 @@ def send_today_schedule(message):
 @bot.message_handler(commands=['tomorrow'])  # обработка команды toworrow
 def send_tomorrow_schedule(message):
     day_commads(message, "tomorrow")
+
+@bot.message_handler(commands=['week'])  # обработка команды week
+def send_tomorrow_schedule(message):
+    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
+    weekly_schedule = get_week_schedule(user[2], user[4])
+    if weekly_schedule:
+        text = markup_text(weekly_schedule)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
+    else:
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено")
+
 
 
 @bot.inline_handler(lambda query: query.query == '')
