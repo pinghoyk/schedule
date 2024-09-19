@@ -252,6 +252,94 @@ def send_tomorrow_schedule(message):
     day_commads(message, "tomorrow")
 
 
+@bot.inline_handler(lambda query: query.query == '')
+def default_query(inline_query):
+    user_id = inline_query.from_user.id
+    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
+
+    if not user:
+        bot.answer_inline_query(
+            inline_query.id, 
+            [
+                types.InlineQueryResultArticle(
+                    id='no_user', 
+                    title='Переход к боту',
+                    thumbnail_url = "https://falbue.github.io/classroom-code/icons/registr.png",
+                    description='Пожалуйста, зарегистрируйтесь для доступа к функциям.',
+                    input_message_content=types.InputTextMessageContent("Вы не зарегистрированы. Перейдите по ссылке, для регистрации"),
+                    reply_markup=types.InlineKeyboardMarkup().add(
+                types.InlineKeyboardButton(
+                    text='Перейти', 
+                    url='https://t.me/schedule_chenk_bot'
+                )
+            )
+                )
+            ], 
+            cache_time=1,
+            switch_pm_text="Регистрация", 
+            switch_pm_parameter="start"
+        )
+        return
+
+    elif user[4] is not None and user[2] is None:
+        bot.answer_inline_query(
+            inline_query.id, 
+            [types.InlineQueryResultArticle(
+                    id='no_group', 
+                    title='Группа не найдена',
+                    thumbnail_url = "https://falbue.github.io/classroom-code/icons/danger.png",
+                    description='Расписание на выбранную группу не найдено...',
+                    input_message_content=types.InputTextMessageContent("Расписание на выбранную группу не найдено!")
+                )
+            ], 
+            cache_time=1, 
+            switch_pm_text="Группа не выбрана", 
+            switch_pm_parameter="start"
+        )
+    else:
+        complex_choice = user[4]
+        group = user[2]
+    
+        week = get_week_schedule(complex_choice, group)
+        week = markup_text(week)
+    
+        today_day = now_day()
+        today = get_day_schedule(complex_choice, group, today_day)
+        today = markup_text(today)
+    
+        tomorrow_day = now_day("tomorrow") 
+        tomorrow = get_day_schedule(complex_choice, group, tomorrow_day)
+        tomorrow = markup_text(tomorrow)
+    
+        commands = [
+            types.InlineQueryResultArticle(
+                id='1', title='Сегодня', description='Расписание на сегодняшний день',
+                thumbnail_url = "https://falbue.github.io/classroom-code/icons/today.png",
+                input_message_content=types.InputTextMessageContent(today, parse_mode="MarkdownV2")
+            ),
+            types.InlineQueryResultArticle(
+                id='2', title='Завтра', description='Расписание на завтрашний день',
+                thumbnail_url = "https://falbue.github.io/classroom-code/icons/toworrow.png",
+                input_message_content=types.InputTextMessageContent(tomorrow, parse_mode="MarkdownV2")
+            ),
+            types.InlineQueryResultArticle(
+                id='3', title='Неделя', description='Расписание на неделю',
+                thumbnail_url = "https://falbue.github.io/classroom-code/icons/week.png",
+                input_message_content=types.InputTextMessageContent(week, parse_mode="MarkdownV2")
+            )
+        ]
+        
+        bot.answer_inline_query(
+            inline_query.id, 
+            commands, 
+            cache_time=1, 
+            switch_pm_text=group, 
+            switch_pm_parameter="start"
+        )
+
+
+
+
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):  # работа с вызовами inline кнопок
     # print(f"Вызов: {call.data}")
