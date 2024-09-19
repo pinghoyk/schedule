@@ -420,7 +420,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
             text = markup_text(weekly_schedule)
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
         else:
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено")
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено", reply_markup=keyboard_week)
 
     if call.data == "select_day":  # выбор дня недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
