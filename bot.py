@@ -260,7 +260,7 @@ def send_tomorrow_schedule(message):
     bot.delete_message(message.chat.id, message.message_id)
     user_id = message.chat.id
     user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
-    weekly_schedule = get_week_schedule(user[2], user[4])
+    weekly_schedule = get_week_schedule(user[4], user[2])
     if weekly_schedule:
         text = markup_text(weekly_schedule)
         bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
