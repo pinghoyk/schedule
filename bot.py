@@ -68,6 +68,7 @@ keyboard_error = InlineKeyboardMarkup()
 keyboard_error.add(btn_change_group)
 
 
+
 # ПРОВЕРКИ
 if os.path.exists(DB_PATH):
     print(f'{LOG}бд есть!')
@@ -86,6 +87,7 @@ else:
     connect.commit()
     connect.close()
     print(f"{LOG}бд создана")
+
 
 
 # ФУНКЦИИ
@@ -110,6 +112,7 @@ def now_time():  # функция получения текущего време
     current_date = now_moscow.strftime("%m.%d.%Y")
     date = f"{current_date} {current_time}"
     return date
+
 
 def now_day(day = None):
     today = datetime.today().weekday()
@@ -221,6 +224,7 @@ def day_commads(message, tomorrow = None):
               bot.edit_message_text(message.chat.id, message_id=user[1], text="Расписание на сегодня не найдено", reply_markup=keyboard_day_back)
 
 
+
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])  # обработка команды start
 def start(message):
@@ -246,6 +250,7 @@ def start(message):
 @bot.message_handler(commands=['today'])  # обработка команды today
 def send_today_schedule(message):
     day_commads(message)
+
 
 @bot.message_handler(commands=['tomorrow'])  # обработка команды toworrow
 def send_tomorrow_schedule(message):
@@ -336,7 +341,6 @@ def default_query(inline_query):
             switch_pm_text=group, 
             switch_pm_parameter="start"
         )
-
 
 
 
@@ -440,9 +444,12 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
         
 
+
 @bot.message_handler(func=lambda message: True)
 def handle_text_message(message): # удаляет сообщения от пользователя
     bot.delete_message(message.chat.id, message.message_id)
+
+
 
 bot.set_my_commands(commands)
 print(f"{LOG}бот запущен...")
