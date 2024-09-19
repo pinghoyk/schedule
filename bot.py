@@ -247,11 +247,9 @@ def start(message):
     bot.send_message(message.chat.id, text="Выберите комплекс:", reply_markup=keyboard_complex)
     bot.delete_message(message.chat.id, message_id)
 
-
 @bot.message_handler(commands=['today'])  # обработка команды today
 def send_today_schedule(message):
     day_commads(message)
-
 
 @bot.message_handler(commands=['tomorrow'])  # обработка команды toworrow
 def send_tomorrow_schedule(message):
@@ -269,6 +267,7 @@ def send_tomorrow_schedule(message):
 
 
 
+# INLINE КОМАНДЫ
 @bot.inline_handler(lambda query: query.query == '')
 def default_query(inline_query):
     user_id = inline_query.from_user.id
