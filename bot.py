@@ -121,7 +121,7 @@ def now_day(day = None):
     if day == "tomorrow": 
         today += 1
     if today >= 6:
-        today == 0
+        today = 0
     return DAYS[today]
 
 
