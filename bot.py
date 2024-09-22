@@ -35,19 +35,19 @@ telebot.types.BotCommand("week", "Расписание на всю неделю"
 # кнопки
 btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="complex_Российская 23")
 btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="complex_Блюхера 91")
-btn_return_complex = InlineKeyboardButton(text="Назад", callback_data="back_complex")
+btn_return_complex = InlineKeyboardButton(text="< Назад", callback_data="back_complex")
 
 
 btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
 btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
 btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
 
-btn_return_main = InlineKeyboardButton(text="Назад", callback_data="back_main")
+btn_return_main = InlineKeyboardButton(text="< Назад", callback_data="back_main")
 
 days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in DAYS]
-btn_dayback = InlineKeyboardButton(text="Назад", callback_data="back_day")
+btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="back_day")
 
-back = InlineKeyboardButton(text="Назад", callback_data="back_courses")
+back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
 
 # клавиатуры
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
@@ -391,7 +391,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
                 buttons.append(button)
 
             back = InlineKeyboardButton(
-                text="Назад", callback_data="back_courses")
+                text="< Назад", callback_data="back_courses")
 
             keyboard_groups = InlineKeyboardMarkup(row_width=3)
             keyboard_groups.add(*buttons)
