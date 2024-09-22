@@ -117,7 +117,6 @@ def now_time():  # функция получения текущего време
 
 def now_day(day = None):
     today = datetime.today().weekday()
-    print(today)
     if day == "tomorrow": 
         today += 1
     if today >= 6:
