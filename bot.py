@@ -499,18 +499,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
     if call.data == "select_week":  # расписание на неделю
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Загрузка расписания...")
-        user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
-        complex_choice = user[4]
-        group = user[2]
-
-        weekly_schedule = get_week_schedule(complex_choice, group)
-
-        if weekly_schedule:
-            text = markup_text(weekly_schedule)
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
-        else:
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено", reply_markup=keyboard_week)
+        send_week_schedule(call.message.chat.id, call.message.message_id, call.message.chat.id, is_button_click=True)
 
     if call.data == "select_day":  # выбор дня недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
