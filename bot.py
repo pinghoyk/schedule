@@ -285,6 +285,45 @@ def get_week_teacher(complex_choice, teacher):
     data_dict = json.loads(data_text.replace("'", "\""))  # Заменяем одинарные кавычки на двойные
     x = (data_dict[teacher])
     return x
+
+
+def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):
+    user_id = chat_id
+
+    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
+    bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Загрузка расписания...")
+
+    if user[4] == None: 
+        bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Сначала выберите корпус!", reply_markup=keyboard_complex)
+    if user[4] == None: 
+        bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Сначала выберите корпус!", reply_markup=keyboard_complex)
+    elif user[2] == None:
+        courses = parser.table_courses(COMPLEX_LINKS[user[4]])
+        keyboard = keyboard_courses(courses)
+        bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Сначала выберите группу!", reply_markup=keyboard)
+    else: 
+        user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
+        complex_choice = user[4]
+        group = user[2]
+    
+        if group.split(":")[0] == "teacher":
+            try:
+                text = get_week_teacher(complex_choice, group.split(":")[1])
+                text = markup_text(text, is_teacher_format=True)
+                bot.edit_message_text(chat_id=chat_id, message_id=user[1], text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
+            except Exception as e:
+                print(f"Ошибка: {e}")
+                bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Расписание не найдено", reply_markup=keyboard_week)
+        else:
+            weekly_schedule = get_week_schedule(complex_choice, group)
+            if weekly_schedule:
+                text = markup_text(weekly_schedule)
+                bot.edit_message_text(chat_id=chat_id, message_id=user[1], text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
+            else:
+                bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Расписание не найдено", reply_markup=keyboard_week)
+    
+
+
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])  # обработка команды start
 def start(message):
