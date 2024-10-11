@@ -353,18 +353,10 @@ def send_today_schedule(message):
 def send_tomorrow_schedule(message):
     day_commads(message, "tomorrow")
 
-@bot.message_handler(commands=['week'])  # обработка команды week
-def send_week_schedule(message):
+@bot.message_handler(commands=['week'])
+def handle_week_command(message):
     bot.delete_message(message.chat.id, message.message_id)
-    user_id = message.chat.id
-    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
-    bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text="Загрузка расписания...")
-    weekly_schedule = get_week_schedule(user[4], user[2])
-    if weekly_schedule:
-        text = markup_text(weekly_schedule)
-        bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
-    else:
-        bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text="Расписание не найдено", reply_markup=keyboard_week)
+    send_week_schedule(message.chat.id, message.message_id, message.chat.id)
 
 
 
