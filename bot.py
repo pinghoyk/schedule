@@ -477,6 +477,32 @@ def callback_query(call):  # работа с вызовами inline кнопо�
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
         else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено...", reply_markup=keyboard_day_back)
 
+    if call.data == "teachers_select":
+        user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
+        complex_choice = user[4]
+
+        back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
+
+        with open(f"{complex_choice}.txt", 'r', encoding='utf-8') as file:
+            data = file.read()
+
+        data_dict_str = data.split("Обновлено:")[1].strip()
+        data_dict_str = data_dict_str[data_dict_str.index('{'):]
+        data_dict = ast.literal_eval(data_dict_str)
+        fio_list = [fio for fio in data_dict.keys() if not fio.endswith('\nотмена')]
+        fio_list = sorted(fio_list)
+
+        buttons = []
+        for i in range(len(fio_list)):
+            button = InlineKeyboardButton(text=fio_list[i], callback_data=f"teacher:{fio_list[i]}")
+            buttons.append(button)
+        keyboard = InlineKeyboardMarkup(row_width=3)
+        keyboard.add(*buttons)
+        keyboard.add(back)
+
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите нужного преподавателя", reply_markup=keyboard)
+
+
     if call.data == "back_complex":  # возврат в комплексы
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите комплекс:", reply_markup=keyboard_complex)
 
