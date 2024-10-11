@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import sqlite3
 import threading
 import ast
+import json
 
 
 bot = telebot.TeleBot(config.API)  # создание бота
