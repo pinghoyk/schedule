@@ -276,6 +276,15 @@ def check_and_update_schedule(x):
     save_teacher_schedule(x)
 
 
+def get_week_teacher(complex_choice, teacher):
+    with open(f"{complex_choice}.txt", "r", encoding="utf-8") as file:
+        lines = file.readlines()  # Считываем все строки в список
+        data = lines[1:]  # Получаем все строки, кроме первой
+    data_text = ''.join(data) # Объединяем все строки в один текст
+    
+    data_dict = json.loads(data_text.replace("'", "\""))  # Заменяем одинарные кавычки на двойные
+    x = (data_dict[teacher])
+    return x
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])  # обработка команды start
 def start(message):
