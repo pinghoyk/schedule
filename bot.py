@@ -287,6 +287,17 @@ def get_week_teacher(complex_choice, teacher):
     return x
 
 
+def get_day_teacher(complex_choice, teacher, selected_day):
+    schedule_week = get_week_teacher(complex_choice, teacher)
+
+    day_schedule = {}
+    for key in schedule_week.keys():
+        if selected_day.lower() in key.lower():
+            day_schedule[key] = schedule_week[key]
+
+    return day_schedule
+
+
 def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):
     user_id = chat_id
 
