@@ -164,6 +164,7 @@ def markup_text(schedule, is_teacher_format=False):
     result = result.replace("???", "**???**")  # Подсвечиваем "???", если время неизвестно
     return result
 
+
 def tg_markdown(text):  # экранирование только для телеграма
     special_characters = r'[]()>#+-=|{}.!'
     escaped_text = ''
@@ -231,13 +232,22 @@ def day_commads(message, tomorrow = None):
         complex_choice = user[4]
         group = user[2]
         day = now_day(tomorrow) 
-        schedule = get_day_schedule(complex_choice, group, day)
-    
-        if schedule:
-              text = markup_text(schedule)
-              bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
+        if group.split(":")[0] == "teacher":
+            try:
+                text = get_day_teacher(complex_choice, group.split(":")[1], day)
+                text = markup_text(text, is_teacher_format=True)
+                bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
+            except Exception as e:
+                print(f"Ошибка: {e}")
+                bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text="Расписание не найдено", reply_markup=keyboard_day_back)
         else:
-              bot.edit_message_text(message.chat.id, message_id=user[1], text="Расписание на сегодня не найдено", reply_markup=keyboard_day_back)
+            schedule = get_day_schedule(complex_choice, group, day)
+        
+            if schedule:
+                  text = markup_text(schedule)
+                  bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
+            else:
+                  bot.edit_message_text(message.chat.id, message_id=user[1], text="Расписание на сегодня не найдено", reply_markup=keyboard_day_back)
 
 
 def save_teacher_schedule(x):
