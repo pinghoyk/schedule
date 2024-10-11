@@ -229,6 +229,40 @@ def day_commads(message, tomorrow = None):
               bot.edit_message_text(message.chat.id, message_id=user[1], text="Расписание на сегодня не найдено", reply_markup=keyboard_day_back)
 
 
+def save_teacher_schedule(x):
+    teacher_schedule = parser.get_teacher_schedule(COMPLEX_LINKS[x])
+    
+    # Получаем текущее время
+    current_time = datetime.now()
+    
+    # Форматируем данные для записи в файл
+    file_content = f"Обновлено: {current_time.strftime('%Y-%m-%d %H:%M:%S')}\n{teacher_schedule}"
+    
+    # Сохраняем данные в файл с именем x.txt
+    with open(f"{x}.txt", "w", encoding="utf-8") as file:
+        file.write(file_content)
+    
+    print(f"Расписание для {x} сохранено.")
+
+def check_and_update_schedule(x):
+    file_name = f"{x}.txt"
+    
+    # Проверяем, существует ли файл
+    if os.path.exists(file_name):
+        with open(file_name, "r", encoding="utf-8") as file:
+            first_line = file.readline().strip()
+            if first_line.startswith("Обновлено:"):
+                last_update_time_str = first_line.split(": ")[1]
+                last_update_time = datetime.strptime(last_update_time_str, '%Y-%m-%d %H:%M:%S')
+                
+                # Проверяем, прошло ли 6 часов с последнего обновления
+                if (datetime.now() - last_update_time).total_seconds() < 6 * 3600:
+                    print("Данные уже обновлены в течение последних 6 часов.")
+                    return  # Обновление не требуется
+    
+    # Если файл не существует или прошло больше 6 часов, обновляем данные
+    save_teacher_schedule(x)
+
 
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])  # обработка команды start
