@@ -427,8 +427,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
                 button = InlineKeyboardButton(text=f"{group}", callback_data=f"select_group_{group}")
                 buttons.append(button)
 
-            back = InlineKeyboardButton(
-                text="< Назад", callback_data="back_courses")
+            back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
 
             keyboard_groups = InlineKeyboardMarkup(row_width=3)
             keyboard_groups.add(*buttons)
