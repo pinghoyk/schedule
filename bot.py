@@ -527,6 +527,12 @@ def handle_text_message(message): # удаляет сообщения от по�
     bot.delete_message(message.chat.id, message.message_id)
 
 
+# запуск, обновления расписания для преподавателей
+thread1 = threading.Thread(target=check_and_update_schedule, args=("Российская 23",))
+thread2 = threading.Thread(target=check_and_update_schedule, args=("Блюхера 91",))
+thread1.start()
+thread2.start()
+
 
 bot.set_my_commands(commands)
 print(f"{LOG}бот запущен...")
