@@ -129,30 +129,40 @@ def now_day(day = None):
     return DAYS[today]
 
 
-def markup_text(text):  # разметка текста на неделю
+def markup_text(schedule, is_teacher_format=False):
+    # Сортируем расписание по порядку дней недели
+    sorted_schedule = sorted(schedule.items(), key=lambda x: DAYS.index(x[0].split(", ")[-1]))
+
     result = ""
-    for day in text:
-        result += f"*{day}*\n————————————————"
-        lessons = text[day]
+    for key, lessons in sorted_schedule:
+        result += f"*{key}*\n————————————————"
+        i = 1
         for lesson in lessons:
-            result += f"\n"
-            result += f"{lesson['number']}.  "
-            result += f"_{lesson['time_start']} - {lesson['time_finish']}_\n"
-            
-            # Перебираем все уроки в одно время
-            for l in lesson['lessons']:
-                result += f"*Предмет: *{l['name']}\n"
-                for data in l["data"]:
-                    teacher_name = f"*Преподаватель: * {data['teacher']}"
-                    teacher_name = teacher_name.replace("отмена", "").strip()
-                    result += f"_{teacher_name}_  "
-                    result += f"*{data['classroom']}*\n"
+            if is_teacher_format:
+                group = lesson['group']
+                lesson_name = lesson['lesson_name']
+                time_start = lesson['time_start']
+                time_finish = lesson['time_finish']
+                classroom = lesson['classroom'] if lesson['classroom'] else ''
+
+                result += f"\n{i}.  _{time_start} - {time_finish}_\n"
+                result += f"*Группа*: {group}\n_Название: *{lesson_name}*_  *{classroom}*\n"
+            else:
+                result += f"\n{i}.  _{lesson['time_start']} - {lesson['time_finish']}_\n"
+                
+                for l in lesson['lessons']:
+                    result += f"*Предмет: *{l['name']}\n"
+                    for data in l["data"]:
+                        teacher_name = f"*Преподаватель: * {data['teacher']}".replace("отмена", "").strip()
+                        result += f"_{teacher_name}_  *{data['classroom']}*\n"
+
+            i += 1
+        
         result += "\n\n"
-    
+
     result = tg_markdown(result)  # Применяем функцию для обработки markdown в Telegram
     result = result.replace("???", "**???**")  # Подсвечиваем "???", если время неизвестно
     return result
-
 
 def tg_markdown(text):  # экранирование только для телеграма
     special_characters = r'[]()>#+-=|{}.!'
@@ -244,6 +254,7 @@ def save_teacher_schedule(x):
         file.write(file_content)
     
     print(f"Расписание для {x} сохранено.")
+
 
 def check_and_update_schedule(x):
     file_name = f"{x}.txt"
