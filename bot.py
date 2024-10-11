@@ -197,7 +197,7 @@ def keyboard_courses(courses):  # создание клавиатуры с ку�
         button = InlineKeyboardButton(text=f"{i+1} курс", callback_data=f"select_course_{i+1}")
         buttons.append(button)
     keyboard = InlineKeyboardMarkup(row_width=2)
-    keyboard.add(*buttons)
+    keyboard.add(*buttons, btn_select_teachers)
     keyboard.add(btn_return_complex)
     return keyboard
 
