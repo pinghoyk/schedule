@@ -7,6 +7,8 @@ import pytz
 import os
 from datetime import datetime, timedelta
 import sqlite3
+import threading
+import ast
 
 
 bot = telebot.TeleBot(config.API)  # создание бота
