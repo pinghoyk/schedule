@@ -2,4 +2,3 @@ requests
 BeautifulSoup4
 pytz
 telebot
-sqlite3
