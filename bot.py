@@ -522,12 +522,21 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         complex_choice = user[4]
         group = user[2]
 
-        day_schedule = get_day_schedule(complex_choice, group, selected_day)
-
-        if day_schedule:
-            text = markup_text(day_schedule)
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
-        else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено...", reply_markup=keyboard_day_back)
+        if group.split(":")[0] == "teacher":
+            try:
+                text = get_day_teacher(complex_choice, group.split(":")[1], selected_day)
+                text = markup_text(text, is_teacher_format=True)
+                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
+            except Exception as e:
+                print(f"Ошибка: {e}")
+                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено", reply_markup=keyboard_day_back)
+        else:
+            day_schedule = get_day_schedule(complex_choice, group, selected_day)
+    
+            if day_schedule:
+                text = markup_text(day_schedule)
+                bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
+            else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено...", reply_markup=keyboard_day_back)
 
     if call.data == "teachers_select":
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
