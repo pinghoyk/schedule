@@ -137,9 +137,9 @@ def markup_text(schedule, is_teacher_format=False):
     for key, lessons in sorted_schedule:
         result.append(f"*{key}*\n————————————————")
         
-        # Сортируем уроки по времени начала
+        # Сортируем уроки по времени начала, пропуская невалидные значения
         lessons.sort(key=lambda lesson: (
-            int(lesson['time_start'].replace('.', ''))  # Преобразуем в формат ччмм
+            int(lesson['time_start'].replace('.', '').replace(':', '')) if lesson['time_start'] != '???' else float('inf')
         ))
 
         for i, lesson in enumerate(lessons, start=1):
