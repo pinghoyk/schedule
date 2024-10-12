@@ -133,36 +133,41 @@ def markup_text(schedule, is_teacher_format=False):
     # Сортируем расписание по порядку дней недели
     sorted_schedule = sorted(schedule.items(), key=lambda x: DAYS.index(x[0].split(", ")[-1]))
 
-    result = ""
+    result = []
     for key, lessons in sorted_schedule:
-        result += f"*{key}*\n————————————————"
-        i = 1
-        for lesson in lessons:
+        result.append(f"*{key}*\n————————————————")
+        
+        # Сортируем уроки по времени начала
+        lessons.sort(key=lambda lesson: (
+            int(lesson['time_start'].replace('.', ''))  # Преобразуем в формат ччмм
+        ))
+
+        for i, lesson in enumerate(lessons, start=1):
+            time_start = lesson['time_start']
+            time_finish = lesson['time_finish']
+            lesson_info = f"\n{i}.  _{time_start} - {time_finish}_\n"
+
             if is_teacher_format:
                 group = lesson['group']
                 lesson_name = lesson['lesson_name']
-                time_start = lesson['time_start']
-                time_finish = lesson['time_finish']
                 classroom = lesson['classroom'] if lesson['classroom'] else ''
-
-                result += f"\n{i}.  _{time_start} - {time_finish}_\n"
-                result += f"*Группа*: {group}\n_Название: *{lesson_name}*_  *{classroom}*\n"
+                lesson_info += f"*Предмет*: {lesson_name}\n_*Группа:* {group}_  *{classroom}*\n"
             else:
-                result += f"\n{i}.  _{lesson['time_start']} - {lesson['time_finish']}_\n"
-                
                 for l in lesson['lessons']:
-                    result += f"*Предмет: *{l['name']}\n"
+                    lesson_info += f"*Предмет: *{l['name']}\n"
                     for data in l["data"]:
                         teacher_name = f"*Преподаватель: * {data['teacher']}".replace("отмена", "").strip()
-                        result += f"_{teacher_name}_  *{data['classroom']}*\n"
+                        lesson_info += f"_{teacher_name}_  *{data['classroom']}*\n"
 
-            i += 1
-        
-        result += "\n\n"
+            result.append(lesson_info)
 
+        result.append("\n\n")
+
+    result = ''.join(result)  # Объединяем список в строку
     result = tg_markdown(result)  # Применяем функцию для обработки markdown в Telegram
     result = result.replace("???", "**???**")  # Подсвечиваем "???", если время неизвестно
     return result
+
 
 
 def tg_markdown(text):  # экранирование только для телеграма
@@ -308,7 +313,7 @@ def get_day_teacher(complex_choice, teacher, selected_day):  # получени�
     return day_schedule
 
 
-def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):  # отправка расписания на неделю
+def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):    # отправка расписания на неделю
     user_id = chat_id
 
     user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
