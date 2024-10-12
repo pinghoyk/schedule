@@ -250,7 +250,7 @@ def day_commads(message, tomorrow = None):
                   bot.edit_message_text(message.chat.id, message_id=user[1], text="Расписание на сегодня не найдено", reply_markup=keyboard_day_back)
 
 
-def save_teacher_schedule(x):
+def save_teacher_schedule(x):  # сохранение данных для преподавателей
     teacher_schedule = parser.get_teacher_schedule(COMPLEX_LINKS[x])
     
     # Получаем текущее время
@@ -266,7 +266,7 @@ def save_teacher_schedule(x):
     print(f"Расписание для {x} сохранено.")
 
 
-def check_and_update_schedule(x):
+def check_and_update_schedule(x):  # проверка, нужно ли обновлять расписание
     file_name = f"{x}.txt"
     
     # Проверяем, существует ли файл
@@ -286,7 +286,7 @@ def check_and_update_schedule(x):
     save_teacher_schedule(x)
 
 
-def get_week_teacher(complex_choice, teacher):
+def get_week_teacher(complex_choice, teacher):  # получение расписания, для выбранного преподавателя из большого списка
     with open(f"{complex_choice}.txt", "r", encoding="utf-8") as file:
         lines = file.readlines()  # Считываем все строки в список
         data = lines[1:]  # Получаем все строки, кроме первой
@@ -297,7 +297,7 @@ def get_week_teacher(complex_choice, teacher):
     return x
 
 
-def get_day_teacher(complex_choice, teacher, selected_day):
+def get_day_teacher(complex_choice, teacher, selected_day):  # получение расписания на день
     schedule_week = get_week_teacher(complex_choice, teacher)
 
     day_schedule = {}
@@ -308,7 +308,7 @@ def get_day_teacher(complex_choice, teacher, selected_day):
     return day_schedule
 
 
-def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):
+def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):  # отправка расписания на неделю
     user_id = chat_id
 
     user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
