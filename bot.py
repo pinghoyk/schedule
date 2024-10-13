@@ -57,6 +57,14 @@ btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="back_day"
 
 back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
 
+btn_bug_report = InlineKeyboardButton(text="Нашли ошибку?", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D0%B1%D0%B0%D0%B3&projects=&template=%D0%B1%D0%B0%D0%B3-%D0%BE%D1%82%D1%87%D1%91%D1%82.md&title=")
+btn_new_function = InlineKeyboardButton(text="Новая идея!", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D1%82%D1%8C&projects=&template=%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81-%D0%BD%D0%B0-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5.md&title=")
+btn_github = InlineKeyboardButton(text="Репозиторий на Github", url="https://github.com/pinghoyk/schedule")
+btn_readme = InlineKeyboardButton(text="Описание", callback_data='readme')
+btn_what_new = InlineKeyboardButton(text="Что нового?", callback_data='what_new')
+btn_return_in_info = InlineKeyboardButton(text="< Назад", callback_data='back_in_info')
+btn_return_info = InlineKeyboardButton(text="< Назад", callback_data='back_info')
+
 # клавиатуры
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
 keyboard_complex.add(btn_ros23, btn_blux91)
