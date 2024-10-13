@@ -84,6 +84,15 @@ keyboard_day_back.add(btn_dayback)
 keyboard_error = InlineKeyboardMarkup()
 keyboard_error.add(btn_change_group)
 
+keyboard_info = InlineKeyboardMarkup(row_width=2)
+keyboard_info.add(btn_new_function, btn_bug_report)
+keyboard_info.add(btn_github)
+keyboard_info.add(btn_readme, btn_what_new)
+keyboard_info.add(btn_return_info)
+
+keyboard_return_info = InlineKeyboardMarkup()
+keyboard_return_info.add(btn_return_in_info)
+
 
 
 # ПРОВЕРКИ
