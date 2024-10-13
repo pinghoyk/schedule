@@ -367,6 +367,29 @@ def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):    
                 bot.edit_message_text(chat_id=chat_id, message_id=user[1], text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
             else:
                 bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Расписание не найдено", reply_markup=keyboard_week)
+
+
+def get_latest_release_text(repo_url):
+    # Извлекаем имя репозитория из URL
+    if 'github.com' not in repo_url:
+        raise ValueError("Укажите корректный URL репозитория GitHub")
+
+    # Преобразуем URL в API-формат
+    parts = repo_url.split('/')
+    if len(parts) < 5:
+        raise ValueError("Укажите полный URL репозитория, например: https://github.com/user/repo")
+
+    repo_name = f"{parts[3]}/{parts[4]}"
+    api_url = f"https://api.github.com/repos/{repo_name}/releases/latest"
+
+    # Выполняем запрос к API
+    response = requests.get(api_url)
+
+    if response.status_code == 200:
+        release_data = response.json()
+        return release_data.get('body', 'Нет описания для последнего релиза')
+    else:
+        raise Exception(f"Ошибка при получении данных: {response.status_code} - {response.text}")
     
 
 
