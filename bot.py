@@ -11,6 +11,7 @@ import threading
 import ast
 import json
 import requests
+import os
 
 
 bot = telebot.TeleBot(config.API)  # создание бота
@@ -24,10 +25,10 @@ COMPLEX_LINKS = {
 "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
 }
-
 DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
-
 LOG = "Логи: "
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+README_PATH = os.path.join(SCRIPT_DIR, 'README.md')
 
 
 commands = [  # команды бота
@@ -637,7 +638,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
     if call.data == 'readme':
-        with open(f"README.md", 'r', encoding='utf-8') as file:
+        with open(README_PATH, 'r', encoding='utf-8') as file:
             data = file.read()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=data, reply_markup=keyboard_return_info)
 
