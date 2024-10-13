@@ -16,6 +16,7 @@ import requests
 bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
+VERSION = "1.0.0"
 DB_NAME = 'database.db'
 DB_PATH = DB_NAME
 YEAR = 25
