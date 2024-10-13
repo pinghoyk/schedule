@@ -10,6 +10,7 @@ import sqlite3
 import threading
 import ast
 import json
+import requests
 
 
 bot = telebot.TeleBot(config.API)  # создание бота
