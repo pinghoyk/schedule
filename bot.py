@@ -662,6 +662,17 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
     if call.data == "back_day":  # возврат на дни недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
+
+    if call.data == 'back_info':  # возврат из инфо меню
+        user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
+        if user[2] == None:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите комплекс:", reply_markup=keyboard_complex)
+        else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
+
+    if call.data == 'back_in_info':
+        text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
+        text = tg_markdown(text)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
         
 
 
