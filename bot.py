@@ -427,6 +427,15 @@ def handle_week_command(message):
     bot.delete_message(message.chat.id, message.message_id)
     send_week_schedule(message.chat.id, message.message_id, message.chat.id)
 
+@bot.message_handler(commands=['info'])
+def handle_week_command(message):
+    user_id = message.chat.id
+    bot.delete_message(user_id, message.message_id)
+
+    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
+    text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
+    text = tg_markdown(text)
+    bot.edit_message_text(chat_id=user_id, message_id=user[1], text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
 
 
 # INLINE КОМАНДЫ
