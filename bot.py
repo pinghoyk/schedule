@@ -17,9 +17,10 @@ import os
 bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
-VERSION = "1.0.0"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+VERSION = "1.0.1"
 DB_NAME = 'database.db'
-DB_PATH = DB_NAME
+DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
 
 COMPLEX_LINKS = {
@@ -29,7 +30,6 @@ COMPLEX_LINKS = {
 
 DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
 LOG = "Логи: "
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 README_PATH = os.path.join(SCRIPT_DIR, 'README.md')
 
 
@@ -280,7 +280,7 @@ def save_teacher_schedule(x):  # сохранение данных для пре
     file_content = f"Обновлено: {current_time.strftime('%Y-%m-%d %H:%M:%S')}\n{teacher_schedule}"
     
     # Сохраняем данные в файл с именем x.txt
-    with open(f"{x}.txt", "w", encoding="utf-8") as file:
+    with open(f"{SCRIPT_DIR}/{x}.txt", "w", encoding="utf-8") as file:
         file.write(file_content)
     
     print(f"Расписание для {x} сохранено.")
@@ -291,7 +291,7 @@ def check_and_update_schedule(x):  # проверка, нужно ли обно�
     
     # Проверяем, существует ли файл
     if os.path.exists(file_name):
-        with open(file_name, "r", encoding="utf-8") as file:
+        with open(f"{SCRIPT_DIR}/{file_name}", "r", encoding="utf-8") as file:
             first_line = file.readline().strip()
             if first_line.startswith("Обновлено:"):
                 last_update_time_str = first_line.split(": ")[1]
@@ -636,7 +636,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
             data = file.read()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=data, reply_markup=keyboard_return_info)
 
-    if call.data == 'what_new':
+    if call.data == 'what_new':  # получение текста последнего обновления
         text = get_latest_release_text("https://github.com/pinghoyk/schedule")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_return_info)
 
