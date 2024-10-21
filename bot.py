@@ -600,7 +600,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
                 bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
             else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено...", reply_markup=keyboard_day_back)
 
-    if call.data == "teachers_select":
+    if call.data == "teachers_select":  # получение списка преподавателей
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
         complex_choice = user[4]
 
@@ -625,13 +625,13 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите нужного преподавателя", reply_markup=keyboard)
 
-    if (call.data).split(":")[0] == "teacher":
+    if (call.data).split(":")[0] == "teacher":  # выбор нужного преподавателся
         teacher_name = (call.data).split(":")[1]
         SQL_request("UPDATE users SET groups = ? WHERE id = ?", (f"teacher:{teacher_name}", user_id))
         print(f"{LOG}Выбран преподаватель {teacher_name}")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
-    if call.data == 'readme':
+    if call.data == 'readme':  # получение и вывод README файла
         with open(README_PATH, 'r', encoding='utf-8') as file:
             data = file.read()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=data, reply_markup=keyboard_return_info)
@@ -640,6 +640,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = get_latest_release_text("https://github.com/pinghoyk/schedule")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_return_info)
 
+    # кнопки возврата
 
     if call.data == "back_complex":  # возврат в комплексы
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите комплекс:", reply_markup=keyboard_complex)
