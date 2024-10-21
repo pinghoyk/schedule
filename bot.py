@@ -150,7 +150,7 @@ def now_day(day = None):
     return DAYS[today]
 
 
-def markup_text(schedule, is_teacher_format=False):
+def markup_text(schedule, is_teacher_format=False):  # Добавление markdown символов
     # Сортируем расписание по порядку дней недели
     sorted_schedule = sorted(schedule.items(), key=lambda x: DAYS.index(x[0].split(", ")[-1]))
 
@@ -188,7 +188,6 @@ def markup_text(schedule, is_teacher_format=False):
     result = tg_markdown(result)  # Применяем функцию для обработки markdown в Telegram
     result = result.replace("???", "**???**")  # Подсвечиваем "???", если время неизвестно
     return result
-
 
 
 def tg_markdown(text):  # экранирование только для телеграма
@@ -240,7 +239,7 @@ def keyboard_courses(courses):  # создание клавиатуры с ку�
     return keyboard
 
 
-def day_commads(message, tomorrow = None):
+def day_commads(message, tomorrow = None):  # команда для получения расписания на указанный день
     bot.delete_message(message.chat.id, message.message_id)
     user_id = message.chat.id
 
@@ -370,7 +369,7 @@ def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):    
                 bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Расписание не найдено", reply_markup=keyboard_week)
 
 
-def get_latest_release_text(repo_url):
+def get_latest_release_text(repo_url):  # получение описание последнего обновления
     # Извлекаем имя репозитория из URL
     if 'github.com' not in repo_url:
         raise ValueError("Укажите корректный URL репозитория GitHub")
@@ -526,7 +525,6 @@ def default_query(inline_query):
         )
 
 
-
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):  # работа с вызовами inline кнопок
     # print(f"Вызов: {call.data}")
@@ -678,7 +676,6 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = tg_markdown(text)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
         
-
 
 @bot.message_handler(func=lambda message: True)
 def handle_text_message(message): # удаляет сообщения от пользователя
