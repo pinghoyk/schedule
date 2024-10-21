@@ -21,17 +21,19 @@ VERSION = "1.0.0"
 DB_NAME = 'database.db'
 DB_PATH = DB_NAME
 YEAR = 25
+
 COMPLEX_LINKS = {
 "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
 }
+
 DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
 LOG = "Логи: "
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 README_PATH = os.path.join(SCRIPT_DIR, 'README.md')
 
 
-commands = [  # команды бота
+commands = [  # КОМАНДЫ
 telebot.types.BotCommand("start", "Перезапуск"),
 telebot.types.BotCommand("today", "Расписание на сегодня"),
 telebot.types.BotCommand("tomorrow", "Расписание на завтра"),
@@ -39,25 +41,18 @@ telebot.types.BotCommand("week", "Расписание на всю неделю"
 telebot.types.BotCommand("info", "Дополнительная информация"),
 ]
 
-# кнопки
+# КНОПКИ
+btn_return_complex = InlineKeyboardButton(text="< Назад", callback_data="back_complex")
 btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="complex_Российская 23")
 btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="complex_Блюхера 91")
-btn_return_complex = InlineKeyboardButton(text="< Назад", callback_data="back_complex")
-
 btn_select_teachers = InlineKeyboardButton(text="Я преподаватель", callback_data='teachers_select')
-
-
 btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
 btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
 btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
-
 btn_return_main = InlineKeyboardButton(text="< Назад", callback_data="back_main")
-
 days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in DAYS]
 btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="back_day")
-
 back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
-
 btn_bug_report = InlineKeyboardButton(text="Нашли ошибку?", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D0%B1%D0%B0%D0%B3&projects=&template=%D0%B1%D0%B0%D0%B3-%D0%BE%D1%82%D1%87%D1%91%D1%82.md&title=")
 btn_new_function = InlineKeyboardButton(text="Новая идея!", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D1%82%D1%8C&projects=&template=%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81-%D0%BD%D0%B0-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5.md&title=")
 btn_github = InlineKeyboardButton(text="Репозиторий на Github", url="https://github.com/pinghoyk/schedule")
@@ -66,7 +61,7 @@ btn_what_new = InlineKeyboardButton(text="Что нового?", callback_data='
 btn_return_in_info = InlineKeyboardButton(text="< Назад", callback_data='back_in_info')
 btn_return_info = InlineKeyboardButton(text="< Назад", callback_data='back_info')
 
-# клавиатуры
+# КЛАВИАТУРЫ
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
 keyboard_complex.add(btn_ros23, btn_blux91)
 
@@ -525,6 +520,7 @@ def default_query(inline_query):
         )
 
 
+# ОБРАБОТКА ВЫЗОВОВ
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):  # работа с вызовами inline кнопок
     # print(f"Вызов: {call.data}")
