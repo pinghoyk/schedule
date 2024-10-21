@@ -575,7 +575,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         SQL_request("UPDATE users SET groups = ? WHERE id = ?", (groups, user_id))
 
         print(f"{LOG}записана группа пользователя")
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: {groups}\n\nВыберите расписание:", reply_markup=keyboard_main)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: *{tg_markdown(groups)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
 
     if call.data == "select_week":  # расписание на неделю
         send_week_schedule(call.message.chat.id, call.message.message_id, call.message.chat.id, is_button_click=True)
@@ -662,7 +662,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         user_data = SQL_request("SELECT groups FROM users WHERE id = ?", (user_id,))
         groups = user_data[0] if user_data else "не выбрана"
 
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: {groups}\n\nВыберите расписание:", reply_markup=keyboard_main)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: *{tg_markdown(groups)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
 
     if call.data == "back_day":  # возврат на дни недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
