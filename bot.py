@@ -581,7 +581,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         send_week_schedule(call.message.chat.id, call.message.message_id, call.message.chat.id, is_button_click=True)
 
     if call.data == "select_day":  # выбор дня недели
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Сегодня: *{tg_markdown(now_day(DAYS))}*\n\nВыберите день недели:", reply_markup=keyboard_days, parse_mode="MarkdownV2")
 
     if call.data.startswith("day_"):  # обработка выбора конкретного дня
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Загрузка расписания...")
@@ -665,7 +665,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: *{tg_markdown(groups)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
 
     if call.data == "back_day":  # возврат на дни недели
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите день недели:", reply_markup=keyboard_days)
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Сегодня: *{tg_markdown(now_day(DAYS))}*\n\nВыберите день недели:", reply_markup=keyboard_days, parse_mode="MarkdownV2")
 
     if call.data == 'back_info':  # возврат из инфо меню
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
