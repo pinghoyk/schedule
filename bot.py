@@ -17,21 +17,23 @@ import os
 bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
-VERSION = "1.0.0"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+VERSION = "1.0.1"
 DB_NAME = 'database.db'
-DB_PATH = DB_NAME
+DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
+
 COMPLEX_LINKS = {
 "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
 }
+
 DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]
 LOG = "Логи: "
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 README_PATH = os.path.join(SCRIPT_DIR, 'README.md')
 
 
-commands = [  # команды бота
+commands = [  # КОМАНДЫ
 telebot.types.BotCommand("start", "Перезапуск"),
 telebot.types.BotCommand("today", "Расписание на сегодня"),
 telebot.types.BotCommand("tomorrow", "Расписание на завтра"),
@@ -39,25 +41,18 @@ telebot.types.BotCommand("week", "Расписание на всю неделю"
 telebot.types.BotCommand("info", "Дополнительная информация"),
 ]
 
-# кнопки
+# КНОПКИ
+btn_return_complex = InlineKeyboardButton(text="< Назад", callback_data="back_complex")
 btn_ros23 = InlineKeyboardButton(text="Российская 23", callback_data="complex_Российская 23")
 btn_blux91 = InlineKeyboardButton(text="Блюхера 91", callback_data="complex_Блюхера 91")
-btn_return_complex = InlineKeyboardButton(text="< Назад", callback_data="back_complex")
-
 btn_select_teachers = InlineKeyboardButton(text="Я преподаватель", callback_data='teachers_select')
-
-
 btn_day = InlineKeyboardButton(text="День", callback_data="select_day")
 btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week")
 btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
-
 btn_return_main = InlineKeyboardButton(text="< Назад", callback_data="back_main")
-
 days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in DAYS]
 btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="back_day")
-
 back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
-
 btn_bug_report = InlineKeyboardButton(text="Нашли ошибку?", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D0%B1%D0%B0%D0%B3&projects=&template=%D0%B1%D0%B0%D0%B3-%D0%BE%D1%82%D1%87%D1%91%D1%82.md&title=")
 btn_new_function = InlineKeyboardButton(text="Новая идея!", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D1%82%D1%8C&projects=&template=%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81-%D0%BD%D0%B0-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5.md&title=")
 btn_github = InlineKeyboardButton(text="Репозиторий на Github", url="https://github.com/pinghoyk/schedule")
@@ -66,7 +61,7 @@ btn_what_new = InlineKeyboardButton(text="Что нового?", callback_data='
 btn_return_in_info = InlineKeyboardButton(text="< Назад", callback_data='back_in_info')
 btn_return_info = InlineKeyboardButton(text="< Назад", callback_data='back_info')
 
-# клавиатуры
+# КЛАВИАТУРЫ
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
 keyboard_complex.add(btn_ros23, btn_blux91)
 
@@ -150,7 +145,7 @@ def now_day(day = None):
     return DAYS[today]
 
 
-def markup_text(schedule, is_teacher_format=False):
+def markup_text(schedule, is_teacher_format=False):  # Добавление markdown символов
     # Сортируем расписание по порядку дней недели
     sorted_schedule = sorted(schedule.items(), key=lambda x: DAYS.index(x[0].split(", ")[-1]))
 
@@ -188,7 +183,6 @@ def markup_text(schedule, is_teacher_format=False):
     result = tg_markdown(result)  # Применяем функцию для обработки markdown в Telegram
     result = result.replace("???", "**???**")  # Подсвечиваем "???", если время неизвестно
     return result
-
 
 
 def tg_markdown(text):  # экранирование только для телеграма
@@ -240,7 +234,7 @@ def keyboard_courses(courses):  # создание клавиатуры с ку�
     return keyboard
 
 
-def day_commads(message, tomorrow = None):
+def day_commads(message, tomorrow = None):  # команда для получения расписания на указанный день
     bot.delete_message(message.chat.id, message.message_id)
     user_id = message.chat.id
 
@@ -286,7 +280,7 @@ def save_teacher_schedule(x):  # сохранение данных для пре
     file_content = f"Обновлено: {current_time.strftime('%Y-%m-%d %H:%M:%S')}\n{teacher_schedule}"
     
     # Сохраняем данные в файл с именем x.txt
-    with open(f"{x}.txt", "w", encoding="utf-8") as file:
+    with open(f"{SCRIPT_DIR}/{x}.txt", "w", encoding="utf-8") as file:
         file.write(file_content)
     
     print(f"Расписание для {x} сохранено.")
@@ -297,7 +291,7 @@ def check_and_update_schedule(x):  # проверка, нужно ли обно�
     
     # Проверяем, существует ли файл
     if os.path.exists(file_name):
-        with open(file_name, "r", encoding="utf-8") as file:
+        with open(f"{SCRIPT_DIR}/{file_name}", "r", encoding="utf-8") as file:
             first_line = file.readline().strip()
             if first_line.startswith("Обновлено:"):
                 last_update_time_str = first_line.split(": ")[1]
@@ -370,7 +364,7 @@ def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):    
                 bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Расписание не найдено", reply_markup=keyboard_week)
 
 
-def get_latest_release_text(repo_url):
+def get_latest_release_text(repo_url):  # получение описание последнего обновления
     # Извлекаем имя репозитория из URL
     if 'github.com' not in repo_url:
         raise ValueError("Укажите корректный URL репозитория GitHub")
@@ -526,7 +520,7 @@ def default_query(inline_query):
         )
 
 
-
+# ОБРАБОТКА ВЫЗОВОВ
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):  # работа с вызовами inline кнопок
     # print(f"Вызов: {call.data}")
@@ -606,7 +600,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
                 bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
             else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено...", reply_markup=keyboard_day_back)
 
-    if call.data == "teachers_select":
+    if call.data == "teachers_select":  # получение списка преподавателей
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
         complex_choice = user[4]
 
@@ -631,21 +625,22 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите нужного преподавателя", reply_markup=keyboard)
 
-    if (call.data).split(":")[0] == "teacher":
+    if (call.data).split(":")[0] == "teacher":  # выбор нужного преподавателся
         teacher_name = (call.data).split(":")[1]
         SQL_request("UPDATE users SET groups = ? WHERE id = ?", (f"teacher:{teacher_name}", user_id))
         print(f"{LOG}Выбран преподаватель {teacher_name}")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
-    if call.data == 'readme':
+    if call.data == 'readme':  # получение и вывод README файла
         with open(README_PATH, 'r', encoding='utf-8') as file:
             data = file.read()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=data, reply_markup=keyboard_return_info)
 
-    if call.data == 'what_new':
+    if call.data == 'what_new':  # получение текста последнего обновления
         text = get_latest_release_text("https://github.com/pinghoyk/schedule")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_return_info)
 
+    # кнопки возврата
 
     if call.data == "back_complex":  # возврат в комплексы
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите комплекс:", reply_markup=keyboard_complex)
@@ -678,7 +673,6 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = tg_markdown(text)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
         
-
 
 @bot.message_handler(func=lambda message: True)
 def handle_text_message(message): # удаляет сообщения от пользователя
