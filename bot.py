@@ -18,7 +18,7 @@ bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-VERSION = "1.0.2.1"
+VERSION = "1.0.2.2"
 DB_NAME = 'database.db'
 DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
@@ -523,7 +523,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     # print(f"Вызов: {call.data}")
     user_id = call.message.chat.id
     username = call.from_user.username
-    SQL_request("UPDATE users SET cleared = ? WHERE id = ?", (username, user_id))
+    SQL_request("UPDATE users SET username = ? WHERE id = ?", (username, user_id))
 
     if (call.data).split("_")[0] == "complex":  # выбор комплекса
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Получение курсов...")
