@@ -59,7 +59,6 @@ btn_github = InlineKeyboardButton(text="Репозиторий на Github", url
 btn_readme = InlineKeyboardButton(text="Описание", callback_data='readme')
 btn_what_new = InlineKeyboardButton(text="Что нового?", callback_data='what_new')
 btn_return_in_info = InlineKeyboardButton(text="< Назад", callback_data='back_in_info')
-btn_return_info = InlineKeyboardButton(text="< Назад", callback_data='back_info')
 
 # КЛАВИАТУРЫ
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
@@ -84,7 +83,7 @@ keyboard_info = InlineKeyboardMarkup(row_width=2)
 keyboard_info.add(btn_new_function, btn_bug_report)
 keyboard_info.add(btn_github)
 keyboard_info.add(btn_readme, btn_what_new)
-keyboard_info.add(btn_return_info)
+keyboard_info.add(btn_return_main)
 
 keyboard_return_info = InlineKeyboardMarkup()
 keyboard_return_info.add(btn_return_in_info)
@@ -665,12 +664,6 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
     if call.data == "back_day":  # возврат на дни недели
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Сегодня: *{tg_markdown(now_day(DAYS))}*\n\nВыберите день недели:", reply_markup=keyboard_days, parse_mode="MarkdownV2")
-
-    if call.data == 'back_info':  # возврат из инфо меню
-        user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
-        if user[2] == None:
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите комплекс:", reply_markup=keyboard_complex)
-        else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
     if call.data == 'back_in_info':
         text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
