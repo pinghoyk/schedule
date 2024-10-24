@@ -18,7 +18,7 @@ bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-VERSION = "1.0.1.2"
+VERSION = "1.0.2"
 DB_NAME = 'database.db'
 DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
@@ -51,7 +51,7 @@ btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week"
 btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
 btn_return_main = InlineKeyboardButton(text="< Назад", callback_data="back_main")
 days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in DAYS]
-btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="back_day")
+btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="select_day")
 back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
 btn_bug_report = InlineKeyboardButton(text="Нашли ошибку?", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D0%B1%D0%B0%D0%B3&projects=&template=%D0%B1%D0%B0%D0%B3-%D0%BE%D1%82%D1%87%D1%91%D1%82.md&title=")
 btn_new_function = InlineKeyboardButton(text="Новая идея!", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D1%82%D1%8C&projects=&template=%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81-%D0%BD%D0%B0-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5.md&title=")
@@ -59,14 +59,13 @@ btn_github = InlineKeyboardButton(text="Репозиторий на Github", url
 btn_readme = InlineKeyboardButton(text="Описание", callback_data='readme')
 btn_what_new = InlineKeyboardButton(text="Что нового?", callback_data='what_new')
 btn_return_in_info = InlineKeyboardButton(text="< Назад", callback_data='back_in_info')
-btn_return_info = InlineKeyboardButton(text="< Назад", callback_data='back_info')
+btn_admin = InlineKeyboardButton(text="Администратор", callback_data='admin')
+btn_stat = InlineKeyboardButton(text="Статистика", callback_data='stat')
+btn_bd_download = InlineKeyboardButton(text="База данных", callback_data='bd_download')
 
 # КЛАВИАТУРЫ
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
 keyboard_complex.add(btn_ros23, btn_blux91)
-
-keyboard_main = InlineKeyboardMarkup(row_width=2)
-keyboard_main.add(btn_day, btn_week, btn_change_group)
 
 keyboard_week = InlineKeyboardMarkup(row_width=2)
 keyboard_week.add(btn_return_main)
@@ -84,10 +83,13 @@ keyboard_info = InlineKeyboardMarkup(row_width=2)
 keyboard_info.add(btn_new_function, btn_bug_report)
 keyboard_info.add(btn_github)
 keyboard_info.add(btn_readme, btn_what_new)
-keyboard_info.add(btn_return_info)
+keyboard_info.add(btn_return_main)
 
 keyboard_return_info = InlineKeyboardMarkup()
 keyboard_return_info.add(btn_return_in_info)
+
+keyboard_admin = InlineKeyboardMarkup(row_width=2)
+keyboard_admin.add(btn_stat, btn_bd_download, btn_return_main)
 
 
 
@@ -365,21 +367,16 @@ def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):    
 
 
 def get_latest_release_text(repo_url):  # получение описание последнего обновления
-    # Извлекаем имя репозитория из URL
     if 'github.com' not in repo_url:
         raise ValueError("Укажите корректный URL репозитория GitHub")
 
-    # Преобразуем URL в API-формат
     parts = repo_url.split('/')
     if len(parts) < 5:
         raise ValueError("Укажите полный URL репозитория, например: https://github.com/user/repo")
 
     repo_name = f"{parts[3]}/{parts[4]}"
     api_url = f"https://api.github.com/repos/{repo_name}/releases/latest"
-
-    # Выполняем запрос к API
     response = requests.get(api_url)
-
     if response.status_code == 200:
         release_data = response.json()
         return release_data.get('body', 'Нет описания для последнего релиза')
@@ -569,6 +566,12 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         SQL_request("UPDATE users SET groups = ? WHERE id = ?", (groups, user_id))
 
         print(f"{LOG}записана группа пользователя")
+
+        keyboard_main = InlineKeyboardMarkup(row_width=2)
+        keyboard_main.add(btn_day, btn_week, btn_change_group)
+        if call.message.chat.id == 1210146115 or call.message.chat.id == 926001057 or call.message.chat.id == 1052870878:
+            keyboard_main.add(btn_admin)
+
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: *{tg_markdown(groups)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
 
     if call.data == "select_week":  # расписание на неделю
@@ -640,6 +643,25 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = get_latest_release_text("https://github.com/pinghoyk/schedule")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_return_info)
 
+    # администратор
+
+    if call.data == 'admin':
+        text = 'Панель администратора'
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_admin)
+
+    if call.data == 'stat':
+        conn = sqlite3.connect(f'{SCRIPT_DIR}/{DB_NAME}')
+        cursor = conn.cursor()
+        cursor.execute('SELECT COUNT(*) FROM users')
+        user_count = cursor.fetchone()[0]
+        conn.close()
+        text = f"Статистика:\n\nКол-во пользователей: {user_count}"
+        bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text=text)
+
+    if call.data == 'bd_download':
+        with open(f'{SCRIPT_DIR}/{DB_NAME}', 'rb') as file:
+            bot.send_document(call.message.chat.id, file)
+
     # кнопки возврата
 
     if call.data == "back_complex":  # возврат в комплексы
@@ -657,20 +679,16 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         user_data = SQL_request("SELECT groups FROM users WHERE id = ?", (user_id,))
         groups = user_data[0] if user_data else "не выбрана"
 
+        keyboard_main = InlineKeyboardMarkup(row_width=2)
+        keyboard_main.add(btn_day, btn_week, btn_change_group)
+        if call.message.chat.id == 1210146115 or call.message.chat.id == 926001057 or call.message.chat.id == 1052870878:
+            keyboard_main.add(btn_admin)
+
         if groups.split(":")[0] == "teacher":
             teacher_name = groups.split(":")[1]
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Преподаватель: *{tg_markdown(teacher_name)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
         else:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: *{tg_markdown(groups)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
-
-    if call.data == "back_day":  # возврат на дни недели
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Сегодня: *{tg_markdown(now_day(DAYS))}*\n\nВыберите день недели:", reply_markup=keyboard_days, parse_mode="MarkdownV2")
-
-    if call.data == 'back_info':  # возврат из инфо меню
-        user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
-        if user[2] == None:
-            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите комплекс:", reply_markup=keyboard_complex)
-        else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите расписание:", reply_markup=keyboard_main)
 
     if call.data == 'back_in_info':
         text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
