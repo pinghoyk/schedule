@@ -649,6 +649,15 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = 'Панель администратора'
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_admin)
 
+    if call.data == 'stat':
+        conn = sqlite3.connect(f'{SCRIPT_DIR}/{DB_NAME}')
+        cursor = conn.cursor()
+        cursor.execute('SELECT COUNT(*) FROM users')
+        user_count = cursor.fetchone()[0]
+        conn.close()
+        text = f"Статистика:\n\nКол-во пользователей: {user_count}"
+        bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text=text)
+
     if call.data == 'bd_download':
         with open(f'{SCRIPT_DIR}/{DB_NAME}', 'rb') as file:
             bot.send_document(call.message.chat.id, file)
