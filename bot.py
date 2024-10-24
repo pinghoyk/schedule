@@ -60,6 +60,8 @@ btn_readme = InlineKeyboardButton(text="Описание", callback_data='readme
 btn_what_new = InlineKeyboardButton(text="Что нового?", callback_data='what_new')
 btn_return_in_info = InlineKeyboardButton(text="< Назад", callback_data='back_in_info')
 btn_admin = InlineKeyboardButton(text="Администратор", callback_data='admin')
+btn_stat = InlineKeyboardButton(text="Статистика", callback_data='stat')
+btn_bd_download = InlineKeyboardButton(text="База данных", callback_data='bd_download')
 
 # КЛАВИАТУРЫ
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
@@ -88,6 +90,9 @@ keyboard_info.add(btn_return_main)
 
 keyboard_return_info = InlineKeyboardMarkup()
 keyboard_return_info.add(btn_return_in_info)
+
+keyboard_admin = InlineKeyboardMarkup(row_width=2)
+keyboard_admin.add(btn_stat, btn_bd_download, btn_return_main)
 
 
 
@@ -565,9 +570,11 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
         print(f"{LOG}записана группа пользователя")
 
+        keyboard_main = InlineKeyboardMarkup(row_width=2)
+        keyboard_main.add(btn_day, btn_week, btn_change_group)
         if call.message.chat.id == 1210146115:
             keyboard_main.add(btn_admin)
-            
+
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: *{tg_markdown(groups)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
 
     if call.data == "select_week":  # расписание на неделю
@@ -639,6 +646,12 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = get_latest_release_text("https://github.com/pinghoyk/schedule")
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_return_info)
 
+    # администратор
+
+    if call.data == 'admin':
+        text = 'Панель администратора'
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_admin)
+
     # кнопки возврата
 
     if call.data == "back_complex":  # возврат в комплексы
@@ -656,6 +669,8 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         user_data = SQL_request("SELECT groups FROM users WHERE id = ?", (user_id,))
         groups = user_data[0] if user_data else "не выбрана"
 
+        keyboard_main = InlineKeyboardMarkup(row_width=2)
+        keyboard_main.add(btn_day, btn_week, btn_change_group)
         if call.message.chat.id == 1210146115:
             keyboard_main.add(btn_admin)
 
