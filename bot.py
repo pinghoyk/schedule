@@ -59,6 +59,7 @@ btn_github = InlineKeyboardButton(text="Репозиторий на Github", url
 btn_readme = InlineKeyboardButton(text="Описание", callback_data='readme')
 btn_what_new = InlineKeyboardButton(text="Что нового?", callback_data='what_new')
 btn_return_in_info = InlineKeyboardButton(text="< Назад", callback_data='back_in_info')
+btn_admin = InlineKeyboardButton(text="Администратор", callback_data='admin')
 
 # КЛАВИАТУРЫ
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
@@ -563,6 +564,10 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         SQL_request("UPDATE users SET groups = ? WHERE id = ?", (groups, user_id))
 
         print(f"{LOG}записана группа пользователя")
+
+        if call.message.chat.id == 1210146115:
+            keyboard_main.add(btn_admin)
+            
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: *{tg_markdown(groups)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
 
     if call.data == "select_week":  # расписание на неделю
@@ -650,6 +655,9 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     if call.data == "back_main":  # возврат на главную
         user_data = SQL_request("SELECT groups FROM users WHERE id = ?", (user_id,))
         groups = user_data[0] if user_data else "не выбрана"
+
+        if call.message.chat.id == 1210146115:
+            keyboard_main.add(btn_admin)
 
         if groups.split(":")[0] == "teacher":
             teacher_name = groups.split(":")[1]
