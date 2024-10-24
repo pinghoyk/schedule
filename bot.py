@@ -649,6 +649,10 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = 'Панель администратора'
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_admin)
 
+    if call.data == 'bd_download':
+        with open(f'{SCRIPT_DIR}/{DB_NAME}', 'rb') as file:
+            bot.send_document(call.message.chat.id, file)
+
     # кнопки возврата
 
     if call.data == "back_complex":  # возврат в комплексы
