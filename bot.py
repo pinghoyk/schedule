@@ -569,7 +569,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
         keyboard_main = InlineKeyboardMarkup(row_width=2)
         keyboard_main.add(btn_day, btn_week, btn_change_group)
-        if call.message.chat.id == 1210146115:
+        if call.message.chat.id == 926001057 or call.message.chat.id == 1210146115:
             keyboard_main.add(btn_admin)
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: *{tg_markdown(groups)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
@@ -681,7 +681,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
         keyboard_main = InlineKeyboardMarkup(row_width=2)
         keyboard_main.add(btn_day, btn_week, btn_change_group)
-        if call.message.chat.id == 1210146115:
+        if call.message.chat.id == 1052870878 or call.message.chat.id == 1210146115:
             keyboard_main.add(btn_admin)
 
         if groups.split(":")[0] == "teacher":
