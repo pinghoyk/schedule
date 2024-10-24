@@ -522,6 +522,8 @@ def default_query(inline_query):
 def callback_query(call):  # работа с вызовами inline кнопок
     # print(f"Вызов: {call.data}")
     user_id = call.message.chat.id
+    username = call.from_user.username
+    SQL_request("UPDATE users SET cleared = ? WHERE id = ?", (username, user_id))
 
     if (call.data).split("_")[0] == "complex":  # выбор комплекса
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Получение курсов...")
