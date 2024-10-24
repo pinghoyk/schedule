@@ -51,7 +51,7 @@ btn_week = InlineKeyboardButton(text="Неделя", callback_data="select_week"
 btn_change_group = InlineKeyboardButton(text="Изменить группу", callback_data="back_courses")
 btn_return_main = InlineKeyboardButton(text="< Назад", callback_data="back_main")
 days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in DAYS]
-btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="back_day")
+btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="select_day")
 back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
 btn_bug_report = InlineKeyboardButton(text="Нашли ошибку?", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D0%B1%D0%B0%D0%B3&projects=&template=%D0%B1%D0%B0%D0%B3-%D0%BE%D1%82%D1%87%D1%91%D1%82.md&title=")
 btn_new_function = InlineKeyboardButton(text="Новая идея!", url="https://github.com/pinghoyk/schedule/issues/new?assignees=Falbue&labels=%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D1%82%D1%8C&projects=&template=%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81-%D0%BD%D0%B0-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5.md&title=")
@@ -661,9 +661,6 @@ def callback_query(call):  # работа с вызовами inline кнопо�
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Преподаватель: *{tg_markdown(teacher_name)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
         else:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Группа: *{tg_markdown(groups)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
-
-    if call.data == "back_day":  # возврат на дни недели
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Сегодня: *{tg_markdown(now_day(DAYS))}*\n\nВыберите день недели:", reply_markup=keyboard_days, parse_mode="MarkdownV2")
 
     if call.data == 'back_in_info':
         text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
