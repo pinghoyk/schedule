@@ -290,7 +290,7 @@ def check_and_update_schedule(x):  # проверка, нужно ли обно�
     file_name = f"{x}.txt"
     
     # Проверяем, существует ли файл
-    if os.path.exists(file_name):
+    if os.path.exists(f"{SCRIPT_DIR}/{file_name}"):
         with open(f"{SCRIPT_DIR}/{file_name}", "r", encoding="utf-8") as file:
             first_line = file.readline().strip()
             if first_line.startswith("Обновлено:"):
