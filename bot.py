@@ -307,7 +307,7 @@ def check_and_update_schedule(x):  # проверка, нужно ли обно�
 
 
 def get_week_teacher(complex_choice, teacher):  # получение расписания, для выбранного преподавателя из большого списка
-    with open(f"{complex_choice}.txt", "r", encoding="utf-8") as file:
+    with open(f"{SCRIPT_DIR}/{complex_choice}.txt", "r", encoding="utf-8") as file:
         lines = file.readlines()  # Считываем все строки в список
         data = lines[1:]  # Получаем все строки, кроме первой
     data_text = ''.join(data) # Объединяем все строки в один текст
@@ -606,7 +606,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
         back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
 
-        with open(f"{complex_choice}.txt", 'r', encoding='utf-8') as file:
+        with open(f"{SCRIPT_DIR}/{complex_choice}.txt", 'r', encoding='utf-8') as file:
             data = file.read()
 
         data_dict_str = data.split("Обновлено:")[1].strip()
