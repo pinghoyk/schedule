@@ -24,7 +24,8 @@ DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
 
 COMPLEX_LINKS = {
-"Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
+# "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
+"Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?i=3",
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
 }
 
@@ -62,6 +63,7 @@ btn_return_in_info = InlineKeyboardButton(text="< Назад", callback_data='ba
 btn_admin = InlineKeyboardButton(text="Администратор", callback_data='admin')
 btn_stat = InlineKeyboardButton(text="Статистика", callback_data='stat')
 btn_bd_download = InlineKeyboardButton(text="База данных", callback_data='bd_download')
+btn_restart = InlineKeyboardButton(text="Перезапустить", callback_data='back_complex')
 
 # КЛАВИАТУРЫ
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
@@ -90,6 +92,9 @@ keyboard_return_info.add(btn_return_in_info)
 
 keyboard_admin = InlineKeyboardMarkup(row_width=2)
 keyboard_admin.add(btn_stat, btn_bd_download, btn_return_main)
+
+keyboard_restart = InlineKeyboardMarkup(row_width=2)
+keyboard_restart.add(btn_restart)
 
 
 
@@ -217,12 +222,13 @@ def get_week_schedule(complex_choice, user_group):  # получение рас�
 
 def get_day_schedule(complex_choice, user_group, selected_day):  # получение расписания на выбранный день
     schedule_week = get_week_schedule(complex_choice, user_group)
-
-    day_schedule = {}
-    for key in schedule_week.keys():
-        if selected_day.lower() in key.lower():
-            day_schedule[key] = schedule_week[key]
-
+    if schedule_week != None:
+        day_schedule = {}
+        for key in schedule_week.keys():
+            if selected_day.lower() in key.lower():
+                day_schedule[key] = schedule_week[key]
+    else: day_schedule = 'Не удалось получить расписание'
+    
     return day_schedule
 
 
@@ -266,11 +272,11 @@ def day_commads(message, tomorrow = None):  # команда для получе
         else:
             schedule = get_day_schedule(complex_choice, group, day)
         
-            if schedule:
+            if schedule != "Не удалось получить расписание":
                   text = markup_text(schedule)
                   bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
             else:
-                  bot.edit_message_text(message.chat.id, message_id=user[1], text="Расписание на сегодня не найдено", reply_markup=keyboard_day_back)
+                  bot.edit_message_text(chat_id=message.chat.id, message_id=user[1], text=schedule, reply_markup=keyboard_day_back)
 
 
 def save_teacher_schedule(x):  # сохранение данных для преподавателей
@@ -364,7 +370,7 @@ def send_week_schedule(chat_id, message_id, user_id, is_button_click=False):    
                 text = markup_text(weekly_schedule)
                 bot.edit_message_text(chat_id=chat_id, message_id=user[1], text=text, reply_markup=keyboard_week, parse_mode="MarkdownV2")
             else:
-                bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Расписание не найдено", reply_markup=keyboard_week)
+                bot.edit_message_text(chat_id=chat_id, message_id=user[1], text="Не удалось получить расписание", reply_markup=keyboard_week)
 
 
 def get_latest_release_text(repo_url):  # получение описание последнего обновления
@@ -532,9 +538,11 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         SQL_request("UPDATE users SET complex = ? WHERE id = ?", (complex_choice, user_id))
 
         courses = parser.table_courses(COMPLEX_LINKS[complex_choice])
-        keyboard = keyboard_courses(courses)
-
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard)
+        if courses != {}:
+            keyboard = keyboard_courses(courses)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard)
+        else:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Не удалось получить актуальные курсы", reply_markup=keyboard_restart)
 
     if call.data.startswith("select_course_"):  # выбор курса
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Получение групп...")
@@ -601,10 +609,10 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         else:
             day_schedule = get_day_schedule(complex_choice, group, selected_day)
     
-            if day_schedule:
+            if day_schedule != "Не удалось получить расписание":
                 text = markup_text(day_schedule)
                 bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_day_back, parse_mode="MarkdownV2")
-            else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Расписание не найдено...", reply_markup=keyboard_day_back)
+            else: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=day_schedule, reply_markup=keyboard_day_back)
 
     if call.data == "teachers_select":  # получение списка преподавателей
         user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),)) 
@@ -676,7 +684,11 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         complex_choice = user[4]
         courses = parser.table_courses(COMPLEX_LINKS[complex_choice])
         keyboard = keyboard_courses(courses)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard)
+        if courses != {}:
+            keyboard = keyboard_courses(courses)
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Выберите курс:", reply_markup=keyboard)
+        else:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Не удалось получить актуальные курсы", reply_markup=keyboard_restart)
 
     if call.data == "back_main":  # возврат на главную
         user_data = SQL_request("SELECT groups FROM users WHERE id = ?", (user_id,))
