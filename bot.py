@@ -317,11 +317,11 @@ def check_and_update_schedule(x):  # проверка, нужно ли обно�
 
 def get_week_teacher(complex_choice, teacher):  # получение расписания, для выбранного преподавателя из большого списка
     with open(f"{SCRIPT_DIR}/{complex_choice}.txt", "r", encoding="utf-8") as file:
-        lines = file.readlines()  # Считываем все строки в список
-        data = lines[1:]  # Получаем все строки, кроме первой
-    data_text = ''.join(data) # Объединяем все строки в один текст
+        lines = file.readlines()
+        data = lines[1:]
+    data_text = ''.join(data)
     
-    data_dict = json.loads(data_text.replace("'", "\""))  # Заменяем одинарные кавычки на двойные
+    data_dict = json.loads(data_text.replace("'", "\""))
     x = (data_dict[teacher])
     return x
 
@@ -466,7 +466,7 @@ def default_query(inline_query):
                     id='no_user', 
                     title='Переход к боту',
                     thumbnail_url = "https://falbue.github.io/classroom-code/icons/registr.png",
-                    description='Пожалуйста, зарегистрируйтесь для доступа к функциям.',
+                    description='Пожалуйста, зарегистрируйтесь для доступа к inline командам',
                     input_message_content=types.InputTextMessageContent("Вы не зарегистрированы. Перейдите по ссылке, для регистрации"),
                     reply_markup=types.InlineKeyboardMarkup().add(
                 types.InlineKeyboardButton(
@@ -498,19 +498,26 @@ def default_query(inline_query):
             switch_pm_parameter="start"
         )
     else:
+        teacher = False
         complex_choice = user[4]
         group = user[2]
-    
-        week = get_week_schedule(complex_choice, group)
-        week = markup_text(week)
-    
         today_day = now_day()
-        today = get_day_schedule(complex_choice, group, today_day)
-        today = markup_text(today)
-    
         tomorrow_day = now_day("tomorrow") 
-        tomorrow = get_day_schedule(complex_choice, group, tomorrow_day)
-        tomorrow = markup_text(tomorrow)
+
+        if group.split(":")[0] == "teacher":
+            group = group.split(":")[1]
+            teacher = True
+            week = get_week_teacher(complex_choice, group)
+            today = get_day_teacher(complex_choice, group, today_day)
+            tomorrow = get_day_teacher(complex_choice, group, tomorrow_day)
+        else:
+            week = get_week_schedule(complex_choice, group)
+            today = get_day_schedule(complex_choice, group, today_day)
+            tomorrow = get_day_schedule(complex_choice, group, tomorrow_day)
+
+        week = markup_text(week, is_teacher_format=teacher)
+        today = markup_text(today, is_teacher_format=teacher)
+        tomorrow = markup_text(tomorrow, is_teacher_format=teacher)
     
         commands = [
             types.InlineQueryResultArticle(
