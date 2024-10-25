@@ -643,6 +643,10 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         teacher_name = (call.data).split(":")[1]
         SQL_request("UPDATE users SET groups = ? WHERE id = ?", (f"teacher:{teacher_name}", user_id))
         print(f"{LOG}Выбран преподаватель {teacher_name}")
+        keyboard_main = InlineKeyboardMarkup(row_width=2)
+        keyboard_main.add(btn_day, btn_week, btn_change_group)
+        if call.message.chat.id == 1210146115 or call.message.chat.id == 926001057 or call.message.chat.id == 1052870878:
+            keyboard_main.add(btn_admin)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Преподаватель: *{tg_markdown(teacher_name)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
 
     if call.data == 'readme':  # получение и вывод README файла
