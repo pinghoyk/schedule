@@ -107,11 +107,11 @@ else:
         CREATE TABLE users (
             id INTEGER,
             message INTEGER, 
-            groups INTEGER,
+            groups TEXT,
             time_registration TIME,
             complex TEXT,
             username TEXT,
-            last_call TEXT
+            last_call INTEGER
         )
     """)
     connect.commit()
