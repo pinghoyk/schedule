@@ -24,8 +24,7 @@ DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
 
 COMPLEX_LINKS = {
-# "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
-"Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?i=3",
+"Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
 }
 
