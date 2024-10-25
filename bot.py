@@ -110,7 +110,8 @@ else:
             groups INTEGER,
             time_registration TIME,
             complex TEXT,
-            username TEXT
+            username TEXT,
+            last_call TEXT
         )
     """)
     connect.commit()
@@ -388,6 +389,21 @@ def get_latest_release_text(repo_url):  # получение описание п
         return release_data.get('body', 'Нет описания для последнего релиза')
     else:
         raise Exception(f"Ошибка при получении данных: {response.status_code} - {response.text}")
+
+
+def mini_notification(text, all_user=None, show=False):  # отправка мини уведомлений
+    if all_user == None:
+        conn = sqlite3.connect(f'{SCRIPT_DIR}/{DB_NAME}')
+        cursor = conn.cursor()
+        cursor.execute("SELECT last_call FROM users")
+        users = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        for call_id in users:
+            try:
+                bot.answer_callback_query(callback_query_id=call_id, show_alert=show, text=text)
+            except: pass
+    else:
+        bot.answer_callback_query(callback_query_id=all_user, show_alert=show, text=text)
     
 
 
@@ -529,7 +545,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     # print(f"Вызов: {call.data}")
     user_id = call.message.chat.id
     username = call.from_user.username
-    SQL_request("UPDATE users SET username = ? WHERE id = ?", (username, user_id))
+    SQL_request("UPDATE users SET username = ?, last_call = ? WHERE id = ?", (username, call.id, user_id))
 
     if (call.data).split("_")[0] == "complex":  # выбор комплекса
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Получение курсов...")
@@ -670,7 +686,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         user_count = cursor.fetchone()[0]
         conn.close()
         text = f"Статистика:\n\nКол-во пользователей: {user_count}"
-        bot.answer_callback_query(callback_query_id=call.id, show_alert=True, text=text)
+        mini_notification(text, call.id, True)
 
     if call.data == 'bd_download':
         with open(f'{SCRIPT_DIR}/{DB_NAME}', 'rb') as file:
@@ -726,6 +742,7 @@ thread1.start()
 thread2.start()
 
 
+mini_notification("Бот перезапущен")
 bot.set_my_commands(commands)
 print(f"{LOG}бот запущен...")
 bot.polling(none_stop=True)
