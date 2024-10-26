@@ -748,8 +748,10 @@ thread2 = threading.Thread(target=check_and_update_schedule, args=("Блюхер
 thread1.start()
 thread2.start()
 
+notification_thread = threading.Thread(target=mini_notification, args=("Бот перезапущен", None, False))
+notification_thread.start()
 
-mini_notification("Бот перезапущен")
+
 bot.set_my_commands(commands)
 print(f"{LOG}бот запущен...")
 bot.polling(none_stop=True)
