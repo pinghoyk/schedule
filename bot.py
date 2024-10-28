@@ -752,6 +752,6 @@ notification_thread = threading.Thread(target=mini_notification, args=("Бот �
 notification_thread.start()
 
 
-bot.set_my_commands(commands)
+# bot.set_my_commands(commands)
 print(f"{LOG}бот запущен...")
 bot.polling(none_stop=True)
