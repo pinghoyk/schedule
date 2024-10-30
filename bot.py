@@ -680,14 +680,18 @@ def callback_query(call):  # работа с вызовами inline кнопо�
             keyboard_main.add(btn_admin)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Преподаватель: *{tg_markdown(teacher_name)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
 
-    if call.data == 'readme':  # получение и вывод README файла
+
+    if call.data == 'readme':
         with open(README_PATH, 'r', encoding='utf-8') as file:
             data = file.read()
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=data, reply_markup=keyboard_return_info)
+        data = format_markdown_for_telegram(data)  # Преобразуем Markdown-разметку в Telegram-разметку
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=data, parse_mode='Markdown', reply_markup=keyboard_return_info)
+
 
     if call.data == 'what_new':  # получение текста последнего обновления
         text = get_latest_release_text("https://github.com/pinghoyk/schedule")
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_return_info)
+        formatted_text = format_markdown_for_telegram(text)  # Форматируем текст под Telegram-разметку
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=formatted_text, parse_mode='Markdown', reply_markup=keyboard_return_info)
 
     # администратор
 
