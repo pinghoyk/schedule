@@ -447,6 +447,13 @@ def format_markdown_for_telegram(text):  # форматирует текст с 
     text = re.sub(r'[ \t]+', ' ', text)  # Убираем дублирующиеся пробелы, оставляя один
     return text
 
+
+def create_issue(title, body, labels):  # Функция для создания GitHub Issue
+    url = f'https://api.github.com/repos/{GITHUB_REPO}/issues'
+    headers = {'Authorization': f'token {GITHUB_TOKEN}', 'Accept': 'application/vnd.github.v3+json'}
+    issue_data = {'title': title, 'body': body, 'labels': labels}
+    response = requests.post(url, json=issue_data, headers=headers)
+    return response.json()
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])  # обработка команды start
 def start(message):
