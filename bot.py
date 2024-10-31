@@ -61,6 +61,7 @@ telebot.types.BotCommand("today", "Расписание на сегодня"),
 telebot.types.BotCommand("tomorrow", "Расписание на завтра"),
 telebot.types.BotCommand("week", "Расписание на всю неделю"),
 telebot.types.BotCommand("info", "Дополнительная информация"),
+telebot.types.BotCommand("help", "Помощь"),
 ]
 
 # КНОПКИ
