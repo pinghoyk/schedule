@@ -795,6 +795,16 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = tg_markdown(text)
         bot.edit_message_text(chat_id=user_id, message_id=call.message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
 
+    if data in ['report_bug', 'new_feature']:          
+        if call.data == 'report_bug':
+            user_states[user_id] = 'waiting_for_bug_report'
+            instructions = bug_instructions
+        else:
+            user_states[user_id] = 'waiting_for_feature_request'
+            instructions = feature_instructions
+
+        msg = bot.edit_message_text(chat_id=user_id, message_id=call.message.message_id, text=f"Пожалуйста, заполните следующие поля:\n\n{instructions}", reply_markup=keyboard_btn_info)
+        user_states[user_id] = {'state': user_states[user_id], 'msg_id': msg.message_id}
 @bot.message_handler(func=lambda message: True)
 def handle_text_message(message): # удаляет сообщения от пользователя
     bot.delete_message(message.chat.id, message.message_id)
