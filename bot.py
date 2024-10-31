@@ -504,6 +504,30 @@ def handle_week_command(message):
     text = tg_markdown(text)
     bot.edit_message_text(chat_id=user_id, message_id=user[1], text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
 
+@bot.message_handler(commands=['help'])
+def send_help(message):
+    user_id = message.chat.id
+    bot.delete_message(user_id, message.message_id)
+    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
+
+    help_text = tg_markdown((
+        "*Инлайн-команды* помогают вам легко и быстро получать расписание. Для этого просто введите имя бота в строку сообщений.\n\n"
+        "*Доступные команды:*\n"
+        "*Сегодня* - покажет расписание на сегодняшний день.\n"
+        "*Завтра* - покажет расписание на завтрашний день.\n"
+        "*Неделя* - покажет расписание на всю неделю.\n\n"
+        "Чтобы использовать инлайн-команды, напишите `@schedule_chenk_bot` в чате. После этого выберите нужную команду из появившегося списка."
+    ))
+
+    keyboard_help = types.InlineKeyboardMarkup()
+    keyboard_help.add(
+        types.InlineKeyboardButton("Сегодня", switch_inline_query_current_chat=""),
+        types.InlineKeyboardButton("Завтра", switch_inline_query_current_chat=""),
+        types.InlineKeyboardButton("Неделя", switch_inline_query_current_chat=""),
+        types.InlineKeyboardButton(text="< Назад", callback_data="back_main")
+    )
+    bot.edit_message_text(chat_id=user_id, message_id=user[1], text=help_text, reply_markup=keyboard_help, parse_mode="MarkdownV2")
+
 
 # INLINE КОМАНДЫ
 @bot.inline_handler(lambda query: query.query == '')
