@@ -789,7 +789,11 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
         text = tg_markdown(text)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
-        
+
+    if call.data == 'back_info':
+        text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
+        text = tg_markdown(text)
+        bot.edit_message_text(chat_id=user_id, message_id=call.message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
 
 @bot.message_handler(func=lambda message: True)
 def handle_text_message(message): # удаляет сообщения от пользователя
