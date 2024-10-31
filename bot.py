@@ -24,12 +24,6 @@ DB_NAME = 'database.db'
 DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
 
-# Ваш токен GitHub
-GITHUB_TOKEN = config.TOKEN
-# Ваш репозиторий
-GITHUB_REPO = 'pinghoyk/schedule' 
-
-
 COMPLEX_LINKS = {
 "Российская 23": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=3",
 "Блюхера 91": "https://pronew.chenk.ru/blocks/manage_groups/website/list.php?id=1"
@@ -729,13 +723,11 @@ def callback_query(call):  # работа с вызовами inline кнопо�
             keyboard_main.add(btn_admin)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=f"Преподаватель: *{tg_markdown(teacher_name)}*\n\nВыберите расписание:", reply_markup=keyboard_main, parse_mode="MarkdownV2")
 
-
     if call.data == 'readme':
         with open(README_PATH, 'r', encoding='utf-8') as file:
             data = file.read()
         data = format_markdown_for_telegram(data)  # Преобразуем Markdown-разметку в Telegram-разметку
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=data, parse_mode='Markdown', reply_markup=keyboard_return_info)
-
+        bot.edit_message_text(chat_id=user_id, message_id=call.message.message_id, text=data, parse_mode='Markdown', reply_markup=keyboard_return_info)
 
     if call.data == 'what_new':  # получение текста последнего обновления
         text = get_latest_release_text("https://github.com/pinghoyk/schedule")
