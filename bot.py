@@ -815,10 +815,12 @@ def handle_report_or_feature(message):
     description = message.text
     username = message.from_user.username or "не указано"
     timestamp = now_time()
+    text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
+    text = tg_markdown(text)
 
     bot.delete_message(chat_id=user_id, message_id=message.message_id)
     msg_id = user_states[user_id].get('msg_id')
-      # Получаем ID сообщения инструкций
+
     global bug_count, feature_count
     if user_states[user_id]['state'] == 'waiting_for_bug_report':
         bug_count += 1
@@ -834,8 +836,8 @@ def handle_report_or_feature(message):
         bot.edit_message_text(chat_id=user_id, message_id=msg_id, text=f"Успешно отправлено: {issue['html_url']}")
     else:
         bot.edit_message_text(chat_id=user_id, message_id=msg_id, text="Ошибка при отправке.")
-    
-    bot.edit_message_text(chat_id=user_id, message_id=msg_id, text="Выберите следующее действие:", reply_markup=keyboard_info)
+ 
+    bot.edit_message_text(chat_id=user_id, message_id=msg_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
     user_states[user_id] = None    
 
 
