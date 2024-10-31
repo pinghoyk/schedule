@@ -604,6 +604,7 @@ def callback_query(call):  # работа с вызовами inline кнопо�
     # print(f"Вызов: {call.data}")
     user_id = call.message.chat.id
     username = call.from_user.username
+    data = call.data
     SQL_request("UPDATE users SET username = ?, last_call = ? WHERE id = ?", (username, call.id, user_id))
 
     if (call.data).split("_")[0] == "complex":  # выбор комплекса
@@ -805,6 +806,39 @@ def callback_query(call):  # работа с вызовами inline кнопо�
 
         msg = bot.edit_message_text(chat_id=user_id, message_id=call.message.message_id, text=f"Пожалуйста, заполните следующие поля:\n\n{instructions}", reply_markup=keyboard_btn_info)
         user_states[user_id] = {'state': user_states[user_id], 'msg_id': msg.message_id}
+
+
+# Обработчик сообщений для багов и идей
+@bot.message_handler(func=lambda msg: user_states.get(msg.chat.id, {}).get('state') in ['waiting_for_bug_report', 'waiting_for_feature_request'])
+def handle_report_or_feature(message):
+    user_id = message.chat.id
+    description = message.text
+    username = message.from_user.username or "не указано"
+    timestamp = now_time()
+
+    bot.delete_message(chat_id=user_id, message_id=message.message_id)
+    msg_id = user_states[user_id].get('msg_id')
+      # Получаем ID сообщения инструкций
+    global bug_count, feature_count
+    if user_states[user_id]['state'] == 'waiting_for_bug_report':
+        bug_count += 1
+        title = f"Ошибка #{bug_count} от @{username}"
+        labels = ["баг"]
+    else:
+        feature_count += 1
+        title = f"Идея #{feature_count} от @{username}"
+        labels = ["создать"]
+    body = f"**Описание:**\n{description}\n\n**Отправлено:** {timestamp}"
+    issue = create_issue(title, body, labels)
+    if 'html_url' in issue:
+        bot.edit_message_text(chat_id=user_id, message_id=msg_id, text=f"Успешно отправлено: {issue['html_url']}")
+    else:
+        bot.edit_message_text(chat_id=user_id, message_id=msg_id, text="Ошибка при отправке.")
+    
+    bot.edit_message_text(chat_id=user_id, message_id=msg_id, text="Выберите следующее действие:", reply_markup=keyboard_info)
+    user_states[user_id] = None    
+
+
 @bot.message_handler(func=lambda message: True)
 def handle_text_message(message): # удаляет сообщения от пользователя
     bot.delete_message(message.chat.id, message.message_id)
