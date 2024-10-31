@@ -454,6 +454,17 @@ def create_issue(title, body, labels):  # Функция для создания
     issue_data = {'title': title, 'body': body, 'labels': labels}
     response = requests.post(url, json=issue_data, headers=headers)
     return response.json()
+
+
+def send_issue(user_id, title, body, labels):  # отправляет задачу в гитхаб
+    issue = create_issue(title, body, labels)
+    text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
+    text = tg_markdown(text)
+    if 'html_url' in issue:
+        confirm_message = bot.send_message(user_id, f"Успешно отправлено: {issue['html_url']}")
+        bot.edit_message_text(chat_id=user_id, message_id=confirm_message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
+
+
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])  # обработка команды start
 def start(message):
