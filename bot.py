@@ -83,6 +83,7 @@ btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="select_da
 back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
 btn_bug_report = InlineKeyboardButton(text="Нашли ошибку?", callback_data='report_bug')
 btn_new_function = InlineKeyboardButton(text="Новая идея!", callback_data='new_feature')
+btn_back_info = InlineKeyboardButton(text="Назад", callback_data="back_info")
 btn_github = InlineKeyboardButton(text="Репозиторий на Github", url="https://github.com/pinghoyk/schedule")
 btn_readme = InlineKeyboardButton(text="Описание", callback_data='readme')
 btn_what_new = InlineKeyboardButton(text="Что нового?", callback_data='what_new')
@@ -113,6 +114,9 @@ keyboard_info.add(btn_new_function, btn_bug_report)
 keyboard_info.add(btn_github)
 keyboard_info.add(btn_readme, btn_what_new)
 keyboard_info.add(btn_return_main)
+
+keyboard_btn_info = InlineKeyboardMarkup(row_width=2)
+keyboard_btn_info.add(btn_back_info)
 
 keyboard_return_info = InlineKeyboardMarkup()
 keyboard_return_info.add(btn_return_in_info)
