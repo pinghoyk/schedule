@@ -622,11 +622,11 @@ def default_query(inline_query):
 # ОБРАБОТКА ВЫЗОВОВ
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):  # работа с вызовами inline кнопок
-    # print(f"Вызов: {call.data}")
     user_id = call.message.chat.id
+    print(f"{user_id}: {call.data}")
     username = call.from_user.username
     data = call.data
-    SQL_request("UPDATE users SET username = ?, last_call = ? WHERE id = ?", (username, call.id, user_id))
+    SQL_request("UPDATE users SET username = ?, last_call = ?, message = ? WHERE id = ?", (username, now_time(), call.message.message_id, user_id))
 
     if (call.data).split("_")[0] == "complex":  # выбор комплекса
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Получение курсов...")
