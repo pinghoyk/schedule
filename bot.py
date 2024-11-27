@@ -434,11 +434,11 @@ def mini_notification(text, all_user=None, show=False):  # отправка ми
     
 
 def format_markdown_for_telegram(text):  # форматирует текст с Markdown-разметкой для корректного отображения в Telegram
+    text = re.sub(r'(?<!\*)\*(?!\*)(.*?)\*', r'_\1_', text)  # Форматируем курсив *text* -> _text_
     text = re.sub(r'(?m)^#{1,6}\s*(.+)', r'*\1*', text)  # Преобразуем заголовки (#) в жирный текст
     text = re.sub(r'(?m)^\s*-\s+', '• ', text)  # Преобразуем "-" в "•"
     text = re.sub(r'(?m)^\s*\*\s+', '• ', text)  # Преобразуем "*" в "•"
     text = re.sub(r'\*\*(.*?)\*\*', r'*\1*', text)  # Форматируем выделение текста **text** -> *text* (жирный)
-    text = re.sub(r'(?<!\*)\*(?!\*)(.*?)\*', r'_\1_', text)  # Форматируем курсив *text* -> _text_
     text = re.sub(r'[ \t]+', ' ', text)  # Убираем дублирующиеся пробелы, оставляя один
     return text
 
