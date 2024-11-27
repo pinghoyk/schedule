@@ -520,12 +520,8 @@ def send_help(message):
     ))
 
     keyboard_help = types.InlineKeyboardMarkup()
-    keyboard_help.add(
-        types.InlineKeyboardButton("Сегодня", switch_inline_query_current_chat=""),
-        types.InlineKeyboardButton("Завтра", switch_inline_query_current_chat=""),
-        types.InlineKeyboardButton("Неделя", switch_inline_query_current_chat=""),
-        types.InlineKeyboardButton(text="< Назад", callback_data="back_main")
-    )
+    keyboard_help.add(types.InlineKeyboardButton("Отравить расписание", switch_inline_query=""))
+    keyboard_help.add(types.InlineKeyboardButton(text="< Назад", callback_data="back_main"))
     bot.edit_message_text(chat_id=user_id, message_id=user[1], text=help_text, reply_markup=keyboard_help, parse_mode="MarkdownV2")
 
 
