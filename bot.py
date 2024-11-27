@@ -877,6 +877,15 @@ notification_thread = threading.Thread(target=mini_notification, args=("Бот �
 notification_thread.start()
 
 
-# bot.set_my_commands(commands)
-print(f"{LOG}бот запущен...")
-bot.polling(none_stop=True)
+bot.set_my_commands(commands)
+print(f"бот запущен...")
+def start_polling():
+    while True:
+        try:
+            bot.polling(none_stop=True, timeout=60)  # Установите таймаут для перезапуска
+        except Exception as e:
+            print(f"Ошибка при подключении: {e}")
+
+if __name__ == "__main__":
+    start_polling()
+    # bot.polling(none_stop=True, timeout=60) # что бы бот не перезапускался, при ошибках
