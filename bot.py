@@ -19,7 +19,7 @@ bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-VERSION = "1.0.3.2"
+VERSION = "1.0.4"
 DB_NAME = 'database.db'
 DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
