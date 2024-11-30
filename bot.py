@@ -19,7 +19,7 @@ bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-VERSION = "1.0.5"
+VERSION = "1.0.5.1"
 DB_NAME = 'database.db'
 DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
@@ -99,7 +99,7 @@ keyboard_week.add(btn_return_main, btn_share_schedule)
 keyboard_days = InlineKeyboardMarkup(row_width=2)
 keyboard_days.add(*days_buttons, btn_return_main)
 
-keyboard_day_back = InlineKeyboardMarkup(row_width=1)
+keyboard_day_back = InlineKeyboardMarkup(row_width=2)
 keyboard_day_back.add(btn_dayback, btn_share_schedule)
 
 keyboard_error = InlineKeyboardMarkup()
