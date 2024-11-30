@@ -19,7 +19,7 @@ bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-VERSION = "1.0.4"
+VERSION = "1.0.5"
 DB_NAME = 'database.db'
 DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
@@ -888,5 +888,5 @@ def start_polling():
             print(f"Ошибка при подключении: {e}")
 
 if __name__ == "__main__":
-    # start_polling()
-    bot.polling(none_stop=True, timeout=60) # что бы бот не перезапускался, при ошибках
+    start_polling()
+    # bot.polling(none_stop=True, timeout=60) # что бы бот не перезапускался, при ошибках
