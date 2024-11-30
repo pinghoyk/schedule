@@ -19,7 +19,7 @@ bot = telebot.TeleBot(config.API)  # создание бота
 
 # глобальные переменные
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-VERSION = "1.0.5.1"
+VERSION = "1.0.6"
 DB_NAME = 'database.db'
 DB_PATH = f"{SCRIPT_DIR}/{DB_NAME}"
 YEAR = 25
@@ -33,35 +33,12 @@ DAYS = ["Понедельник", "Вторник", "Среда", "Четвер�
 LOG = "Логи: "
 README_PATH = os.path.join(SCRIPT_DIR, 'README.md')
 
-GITHUB_TOKEN = config.TOKEN
-GITHUB_REPO = 'pinghoyk/schedule' 
-
-user_states = {}
-bug_count = 0
-feature_count = 0
-
-bug_instructions = (
-    "Опишите ошибку:\nЧеткое и краткое описание ошибки.\n\n"
-    "Воспроизведение:\nШаги для воспроизведения поведения:\n1. Перейдите в «...»\n"
-    "2. Нажмите «....»\n3. Посмотрите ошибку.\n\n"
-    "Ожидаемое поведение:\nЧеткое и краткое описание ожидаемого результата.\n\n"
-    "Скриншоты:\nЕсли применимо, добавьте скриншоты, чтобы объяснить проблему."
-)
-
-feature_instructions = (
-    "Связан ли ваш запрос на функцию с проблемой? Опишите:\nЧеткое и краткое описание проблемы.\n\n"
-    "Опишите решение, которое вы хотели бы:\nЧеткое и краткое описание того, что вы хотите получить.\n\n"
-    "Опишите альтернативы, которые вы рассматривали:\nЧеткое и краткое описание альтернативных решений или функций.\n\n"
-    "Дополнительный контекст:\nДобавьте любой другой контекст или скриншоты."
-)
-
 commands = [  # КОМАНДЫ
 telebot.types.BotCommand("start", "Перезапуск"),
 telebot.types.BotCommand("today", "Расписание на сегодня"),
 telebot.types.BotCommand("tomorrow", "Расписание на завтра"),
 telebot.types.BotCommand("week", "Расписание на всю неделю"),
 telebot.types.BotCommand("info", "Дополнительная информация"),
-telebot.types.BotCommand("help", "Об inline командах"),
 ]
 
 # КНОПКИ
@@ -76,8 +53,6 @@ btn_return_main = InlineKeyboardButton(text="< Назад", callback_data="back_
 days_buttons = [InlineKeyboardButton(text=day, callback_data=f"day_{day.lower()}") for day in DAYS]
 btn_dayback = InlineKeyboardButton(text="< Назад", callback_data="select_day")
 back = InlineKeyboardButton(text="< Назад", callback_data="back_courses")
-btn_bug_report = InlineKeyboardButton(text="Нашли ошибку?", callback_data='report_bug')
-btn_new_function = InlineKeyboardButton(text="Новая идея!", callback_data='new_feature')
 btn_back_info = InlineKeyboardButton(text="Назад", callback_data="back_info")
 btn_github = InlineKeyboardButton(text="Репозиторий на Github", url="https://github.com/pinghoyk/schedule")
 btn_readme = InlineKeyboardButton(text="Описание", callback_data='readme')
@@ -106,7 +81,6 @@ keyboard_error = InlineKeyboardMarkup()
 keyboard_error.add(btn_change_group)
 
 keyboard_info = InlineKeyboardMarkup(row_width=2)
-keyboard_info.add(btn_new_function, btn_bug_report)
 keyboard_info.add(btn_github)
 keyboard_info.add(btn_readme, btn_what_new)
 keyboard_info.add(btn_return_main)
@@ -145,7 +119,6 @@ else:
     connect.commit()
     connect.close()
     print(f"{LOG}бд создана")
-
 
 
 # ФУНКЦИИ
@@ -444,23 +417,6 @@ def format_markdown_for_telegram(text):  # форматирует текст с 
     return text
 
 
-def create_issue(title, body, labels):  # Функция для создания GitHub Issue
-    url = f'https://api.github.com/repos/{GITHUB_REPO}/issues'
-    headers = {'Authorization': f'token {GITHUB_TOKEN}', 'Accept': 'application/vnd.github.v3+json'}
-    issue_data = {'title': title, 'body': body, 'labels': labels}
-    response = requests.post(url, json=issue_data, headers=headers)
-    return response.json()
-
-
-def send_issue(user_id, title, body, labels):  # отправляет задачу в гитхаб
-    issue = create_issue(title, body, labels)
-    text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
-    text = tg_markdown(text)
-    if 'html_url' in issue:
-        confirm_message = bot.send_message(user_id, f"Успешно отправлено: {issue['html_url']}")
-        bot.edit_message_text(chat_id=user_id, message_id=confirm_message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
-
-
 # КОМАНДЫ
 @bot.message_handler(commands=['start'])  # обработка команды start
 def start(message):
@@ -504,26 +460,6 @@ def handle_week_command(message):
     text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
     text = tg_markdown(text)
     bot.edit_message_text(chat_id=user_id, message_id=user[1], text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
-
-@bot.message_handler(commands=['help'])
-def send_help(message):
-    user_id = message.chat.id
-    bot.delete_message(user_id, message.message_id)
-    user = SQL_request("SELECT * FROM users WHERE id = ?", (int(user_id),))
-
-    help_text = tg_markdown((
-        "*Инлайн-команды* помогают вам легко и быстро получать расписание. Для этого просто введите имя бота в строку сообщений.\n\n"
-        "*Доступные команды:*\n"
-        "*Сегодня* - покажет расписание на сегодняшний день.\n"
-        "*Завтра* - покажет расписание на завтрашний день.\n"
-        "*Неделя* - покажет расписание на всю неделю.\n\n"
-        "Чтобы использовать инлайн-команды, напишите `@schedule_chenk_bot` в чате. После этого выберите нужную команду из появившегося списка."
-    ))
-
-    keyboard_help = types.InlineKeyboardMarkup()
-    keyboard_help.add(types.InlineKeyboardButton("Отправить расписание", switch_inline_query=""))
-    keyboard_help.add(types.InlineKeyboardButton(text="< Назад", callback_data="back_main"))
-    bot.edit_message_text(chat_id=user_id, message_id=user[1], text=help_text, reply_markup=keyboard_help, parse_mode="MarkdownV2")
 
 
 # INLINE КОМАНДЫ
@@ -812,55 +748,6 @@ def callback_query(call):  # работа с вызовами inline кнопо�
         text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
         text = tg_markdown(text)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
-
-    if call.data == 'back_info':
-        text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
-        text = tg_markdown(text)
-        bot.edit_message_text(chat_id=user_id, message_id=call.message.message_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
-
-    if data in ['report_bug', 'new_feature']:          
-        if call.data == 'report_bug':
-            user_states[user_id] = 'waiting_for_bug_report'
-            instructions = bug_instructions
-        else:
-            user_states[user_id] = 'waiting_for_feature_request'
-            instructions = feature_instructions
-
-        msg = bot.edit_message_text(chat_id=user_id, message_id=call.message.message_id, text=f"Пожалуйста, заполните следующие поля:\n\n{instructions}", reply_markup=keyboard_btn_info)
-        user_states[user_id] = {'state': user_states[user_id], 'msg_id': msg.message_id}
-
-
-# Обработчик сообщений для багов и идей
-@bot.message_handler(func=lambda msg: user_states.get(msg.chat.id, {}).get('state') in ['waiting_for_bug_report', 'waiting_for_feature_request'])
-def handle_report_or_feature(message):
-    user_id = message.chat.id
-    description = message.text
-    username = message.from_user.username or "не указано"
-    timestamp = now_time()
-    text = f"*Текущая версия:* {VERSION}\n\nВыберите нужный результат"
-    text = tg_markdown(text)
-
-    bot.delete_message(chat_id=user_id, message_id=message.message_id)
-    msg_id = user_states[user_id].get('msg_id')
-
-    global bug_count, feature_count
-    if user_states[user_id]['state'] == 'waiting_for_bug_report':
-        bug_count += 1
-        title = f"Ошибка #{bug_count} от @{username}"
-        labels = ["баг"]
-    else:
-        feature_count += 1
-        title = f"Идея #{feature_count} от @{username}"
-        labels = ["создать"]
-    body = f"**Описание:**\n{description}\n\n**Отправлено:** {timestamp}"
-    issue = create_issue(title, body, labels)
-    if 'html_url' in issue:
-        bot.edit_message_text(chat_id=user_id, message_id=msg_id, text=f"Успешно отправлено: {issue['html_url']}")
-    else:
-        bot.edit_message_text(chat_id=user_id, message_id=msg_id, text="Ошибка при отправке.")
- 
-    bot.edit_message_text(chat_id=user_id, message_id=msg_id, text=text, reply_markup=keyboard_info, parse_mode="MarkdownV2")
-    user_states[user_id] = None    
 
 
 @bot.message_handler(func=lambda message: True)
