@@ -87,19 +87,20 @@ btn_admin = InlineKeyboardButton(text="Администратор", callback_dat
 btn_stat = InlineKeyboardButton(text="Статистика", callback_data='stat')
 btn_bd_download = InlineKeyboardButton(text="База данных", callback_data='bd_download')
 btn_restart = InlineKeyboardButton(text="Перезапустить", callback_data='back_complex')
+btn_share_schedule = InlineKeyboardButton("Поделится расписанием", switch_inline_query="")
 
 # КЛАВИАТУРЫ
 keyboard_complex = InlineKeyboardMarkup(row_width=1)
 keyboard_complex.add(btn_ros23, btn_blux91)
 
 keyboard_week = InlineKeyboardMarkup(row_width=2)
-keyboard_week.add(btn_return_main)
+keyboard_week.add(btn_return_main, btn_share_schedule)
 
 keyboard_days = InlineKeyboardMarkup(row_width=2)
 keyboard_days.add(*days_buttons, btn_return_main)
 
 keyboard_day_back = InlineKeyboardMarkup(row_width=1)
-keyboard_day_back.add(btn_dayback)
+keyboard_day_back.add(btn_dayback, btn_share_schedule)
 
 keyboard_error = InlineKeyboardMarkup()
 keyboard_error.add(btn_change_group)
@@ -520,7 +521,7 @@ def send_help(message):
     ))
 
     keyboard_help = types.InlineKeyboardMarkup()
-    keyboard_help.add(types.InlineKeyboardButton("Отравить расписание", switch_inline_query=""))
+    keyboard_help.add(types.InlineKeyboardButton("Отправить расписание", switch_inline_query=""))
     keyboard_help.add(types.InlineKeyboardButton(text="< Назад", callback_data="back_main"))
     bot.edit_message_text(chat_id=user_id, message_id=user[1], text=help_text, reply_markup=keyboard_help, parse_mode="MarkdownV2")
 
@@ -887,5 +888,5 @@ def start_polling():
             print(f"Ошибка при подключении: {e}")
 
 if __name__ == "__main__":
-    start_polling()
-    # bot.polling(none_stop=True, timeout=60) # что бы бот не перезапускался, при ошибках
+    # start_polling()
+    bot.polling(none_stop=True, timeout=60) # что бы бот не перезапускался, при ошибках
